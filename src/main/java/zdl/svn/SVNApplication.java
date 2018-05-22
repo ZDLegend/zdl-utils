@@ -19,11 +19,15 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 public class SVNApplication {
 
-    private static String url = "https://192.0.0.241/zdl";
-    private static String name = "zdlegend";
-    private static String password = "password";
+//    private static String url = "https://192.0.0.70/SysComponent-Delivery/test";
+//    private static String name = "user_app_simis";
+//    private static char[] password = {'B', 's', 'F', '1', '9', 'T', 'b', 'Q'};
 
-    public static String path = "F:\\SVN_CODE";
+    private static String url = "https://192.0.0.241/fsdmdept/components/zjjs/simis/trunk/simis/src/main/java/com/hikvision";
+    private static String name = "zhangminghao5";
+    private static String password = "*Ab135799";
+
+    public static String path = "F:\\SVN_CODE\\zjjs\\simis\\trunk\\simis";
 
     //根据URL实例化SVN版本库
     public static SVNRepository repository;
@@ -51,7 +55,7 @@ public class SVNApplication {
         FSRepositoryFactory.setup();
 
         ISVNOptions options = SVNWCUtil.createDefaultOptions(true);
-        clientManager = SVNClientManager.newInstance((DefaultSVNOptions) options, name, new String(password));
+        clientManager = SVNClientManager.newInstance((DefaultSVNOptions) options, name, password);
 
         try {
             //获取SVN的URL。

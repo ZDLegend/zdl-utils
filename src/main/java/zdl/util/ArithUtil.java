@@ -6,7 +6,7 @@ import java.math.BigDecimal;
  * 由于Java的简单类型不能够精确的对浮点数进行运算，这个工具类提供精
  * 确的浮点数运算，包括加减乘除和四舍五入。
  *
- * @author zhangminghao5
+ * @author ZDLegend
  * @create 2018/5/10
  */
 
