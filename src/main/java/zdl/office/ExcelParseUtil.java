@@ -37,29 +37,27 @@ public class ExcelParseUtil {
 
     public static List<ExcelInfo> parseWorkbookToMatrix(Workbook workbook){
         List<ExcelInfo> excelInfos = new ArrayList<>();
-        int numOfSheet = workbook.getNumberOfSheets();
 
         //依次解析每一个Sheet
-        for (int i = 0; i < numOfSheet; ++i) {
+        workbook.forEach(rows -> {
             ExcelInfo excelInfo = new ExcelInfo();
             List<List<String>> array = new ArrayList<>();
-            Sheet sheet = workbook.getSheetAt(i);
-            excelInfo.setSheetName(sheet.getSheetName());
+            excelInfo.setSheetName(rows.getSheetName());
             excelInfos.add(excelInfo);
-            for (Row row : sheet){
+            rows.forEach(row -> {
                 List<String> s = parseRow(row);
                 if(excelInfo.getFirstRow() == null && rowIsFull(s)){
                     excelInfo.setFirstRow(s);
-                    continue;
+                    return;
                 }
 
                 if(excelInfo.getFirstRow() != null){
                     array.add(s);
                 }
-            }
+            });
 
             excelInfo.setContent(array);
-        }
+        });
 
         return excelInfos;
     }
@@ -67,19 +65,12 @@ public class ExcelParseUtil {
     //解析行
     private static List<String> parseRow(Row row) {
         List<String> rst = new ArrayList<>();
-
-        Cell cell;
-
-        //利用迭代器得到每一个cell
-        for (Cell aRow : row) {
-            cell = aRow;
-
+        row.forEach(cell -> {
             //定义每一个cell的数据类型
             cell.setCellType(CellType.STRING);
-
             //取出cell中的value
             rst.add(cell.getStringCellValue().replace(" ", "").trim());
-        }
+        });
 
         return rst;
     }
@@ -110,10 +101,9 @@ public class ExcelParseUtil {
     }
 
     public static void main(String[] args){
-        File file = new File("C:\\Users\\zhangminghao5\\Desktop\\验证报告\\web构架合规性验证报告.xlsx");
-
+        File file = new File("C:\\Users\\zhangminghao5\\Desktop\\报告.xlsx");
         try (InputStream is = new FileInputStream(file)){
-            List<ExcelInfo> json = parseWorkbookToMatrix(initWorkBook("web构架合规性验证报告.xlsx", is));
+            List<ExcelInfo> json = parseWorkbookToMatrix(initWorkBook("报告.xlsx", is));
             System.out.println(json);
         } catch (IOException e) {
             e.printStackTrace();
