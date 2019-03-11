@@ -3,6 +3,7 @@ package zdl.util;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -10,6 +11,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
+ * 异步封装基于CompletableFuture
+ *
  * @author ZDLegend
  * @create 2017/12/12
  */
@@ -22,26 +25,40 @@ public class AsyncUtil {
     /**
      * 将函数handle进行异步操作, 获取到的结果在resultHandle中执行
      */
-    public static <V> void handle(Supplier<V> handle, Consumer<V> resultHandle){
-        cachedThreadPool.submit(() -> {
-            V result = handle.get();
-            resultHandle.accept(result);
-        });
+    public static <V> CompletableFuture<V> handle(Supplier<V> handle, Consumer<V> success, Consumer<Throwable> exception){
+        return CompletableFuture.supplyAsync(handle, cachedThreadPool)
+                .whenComplete((v, throwable) -> {
+                    if (throwable == null) {
+                        success.accept(v);
+                    } else {
+                        exception.accept(throwable);
+                    }
+                });
     }
 
-    public static <T, V> void handle(T obj, Function<T, V> handle, Consumer<V> resultHandle){
-        cachedThreadPool.submit(() -> {
-            V result = handle.apply(obj);
-            resultHandle.accept(result);
-        });
+    public static <T, V> CompletableFuture<V> handle(T obj, Function<T, V> handle, Consumer<V> resultHandle,
+                                                     Consumer<Throwable> exception){
+        return CompletableFuture.supplyAsync(() -> handle.apply(obj), cachedThreadPool)
+                .whenComplete((v, throwable) -> {
+                    if (throwable == null) {
+                        resultHandle.accept(v);
+                    } else {
+                        exception.accept(throwable);
+                    }
+                });
     }
 
-    public static <V> void handle(V obj, Consumer<V> handle){
-        cachedThreadPool.submit(() -> handle.accept(obj));
+    public static <V> CompletableFuture handle(V obj, Consumer<V> handle, Consumer<Throwable> exception){
+        return CompletableFuture.runAsync(() -> handle.accept(obj), cachedThreadPool)
+                .whenComplete((v, throwable) -> {
+                    if (throwable != null) {
+                        exception.accept(throwable);
+                    }
+                });
     }
 
-    public static void handle(Runnable runnable){
-        cachedThreadPool.submit(runnable);
+    public static CompletableFuture handle(Runnable runnable){
+        return CompletableFuture.runAsync(runnable, cachedThreadPool);
     }
 
     /**
@@ -56,7 +73,6 @@ public class AsyncUtil {
                 runnable.run();
             }
         };
-
         timer.schedule(task, delay, period);
     }
 
