@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author ZDLegend
@@ -26,38 +28,29 @@ public class ClassUtil {
      * @return
      */
     public static List<Class<?>> getAllClassByPackageName(Package pkg) {
-        String packageName = pkg.getName();
         // 获取当前包下以及子包下所以的类
-        List<Class<?>> returnClassList = getClasses(packageName);
-        return returnClassList;
+        return getClasses(pkg.getName());
     }
 
     /**
      * 通过接口名取得某个接口下所有实现这个接口的类
      */
     public static List<Class<?>> getAllClassByInterface(Class<?> c) {
-        List<Class<?>> returnClassList = null;
-
         if (c.isInterface()) {
             // 获取当前的包名
             String packageName = c.getPackage().getName();
             // 获取当前包下以及子包下所以的类
             List<Class<?>> allClass = getClasses(packageName);
             if (allClass != null) {
-                returnClassList = new ArrayList<Class<?>>();
-                for (Class<?> cls : allClass) {
-                    // 判断是否是同一个接口
-                    if (c.isAssignableFrom(cls)) {
-                        // 本身不加入进去
-                        if (!c.equals(cls)) {
-                            returnClassList.add(cls);
-                        }
-                    }
-                }
+                return allClass.stream()
+                        .distinct()
+                        .filter(c::isAssignableFrom)
+                        .filter(cls -> !c.equals(cls))
+                        .collect(Collectors.toList());
             }
         }
 
-        return returnClassList;
+        return null;
     }
 
     /**
@@ -65,16 +58,10 @@ public class ClassUtil {
      */
     public static String[] getPackageAllClassName(String classLocation, String packageName) {
         // 将packageName分解
-        String[] packagePathSplit = packageName.split("[.]");
-        StringBuilder realClassLocation = new StringBuilder(classLocation);
-        int packageLength = packagePathSplit.length;
-        for (String aPackagePathSplit : packagePathSplit) {
-            realClassLocation.append(File.separator).append(aPackagePathSplit);
-        }
-        File packeageDir = new File(realClassLocation.toString());
-        if (packeageDir.isDirectory()) {
-            String[] allClassName = packeageDir.list();
-            return allClassName;
+        String realClassLocation = String.join(File.separator, packageName.split("[.]"));
+        File packageDir = new File(realClassLocation);
+        if (packageDir.isDirectory()) {
+            return packageDir.list();
         }
         return null;
     }
@@ -173,7 +160,8 @@ public class ClassUtil {
      * @param recursive
      * @param classes
      */
-    private static void findAndAddClassesInPackageByFile(String packageName, String packagePath, final boolean recursive, List<Class<?>> classes) {
+    private static void findAndAddClassesInPackageByFile(String packageName, String packagePath,
+                                                         final boolean recursive, List<Class<?>> classes) {
         // 获取此包的目录 建立一个File
         File dir = new File(packagePath);
         // 如果不存在或者 也不是目录就直接返回
@@ -204,11 +192,9 @@ public class ClassUtil {
         }
     }
 
-    public static void main(String[] args) throws InstantiationException, IllegalAccessException {
-
-        HashMap<String, Class> map = new HashMap<>();
-
+    public static void main(String[] args) {
         // 获取特定包下所有的类(包括接口和类)
         List<Class<?>> clsList = ClassUtil.getClasses("zdl.es");
+        System.out.println(clsList);
     }
 }

@@ -56,7 +56,7 @@ public class Base64Util {
         if (!destFile.getParentFile().exists()) {
             destFile.getParentFile().mkdirs();
         }
-        
+
         destFile.createNewFile();
 
         try(InputStream in = new ByteArrayInputStream(bytes);
