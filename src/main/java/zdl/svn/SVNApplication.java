@@ -19,15 +19,11 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 public class SVNApplication {
 
-//    private static String url = "https://192.0.0.70/SysComponent-Delivery/test";
-//    private static String name = "user_app_simis";
-//    private static char[] password = {'B', 's', 'F', '1', '9', 'T', 'b', 'Q'};
+    private static String url = "https://192.0.0.241/test";
+    private static String name = "test";
+    private static String password = "123456";
 
-    private static String url = "https://192.0.0.241/fsdmdept/components/zjjs/simis/trunk/simis/src/main/java/com/hikvision";
-    private static String name = "zhangminghao5";
-    private static String password = "*Ab135799";
-
-    public static String path = "F:\\SVN_CODE\\zjjs\\simis\\trunk\\simis";
+    public static String path = "F:\\SVN_CODE\\zjjs";
 
     //根据URL实例化SVN版本库
     public static SVNRepository repository;
