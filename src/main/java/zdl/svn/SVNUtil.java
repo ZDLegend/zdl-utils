@@ -177,7 +177,7 @@ public class SVNUtil {
                 new File[]{commitFile}, true, message, null,
                 null, true, false, SVNDepth.INFINITY);
 
-        Long res = info.getNewRevision();
+        long res = info.getNewRevision();
         if (res == -1L) {
             return SVNApplication.repository.getLatestRevision();
         }
@@ -187,7 +187,7 @@ public class SVNUtil {
 
     public static void doDelete(String... strings) throws SVNException {
         SVNClientManager clientManager = SVNApplication.clientManager;
-        SVNURL deleteUrls[] = new SVNURL[strings.length];
+        SVNURL[] deleteUrls = new SVNURL[strings.length];
         for (int i = 0; i < strings.length; i++) {
             SVNURL repositoryOptUrl = SVNURL.parseURIEncoded(strings[i]);
             deleteUrls[i] = repositoryOptUrl;
@@ -201,7 +201,7 @@ public class SVNUtil {
             System.out.println("delete svn : '" + SVNApplication.path + "/" + url + "'");
             SVNClientManager clientManager = SVNApplication.clientManager;
             SVNURL repositoryOptUrl = SVNURL.parseURIEncoded(SVNApplication.path + "/" + url);
-            SVNURL deleteUrls[] = new SVNURL[1];
+            SVNURL[] deleteUrls = new SVNURL[1];
             deleteUrls[0] = repositoryOptUrl;
             clientManager.getCommitClient().doDelete(deleteUrls, "从SVN数据库中删除文件 : " + url);
         } else {
