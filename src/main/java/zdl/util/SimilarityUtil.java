@@ -38,7 +38,7 @@ public class SimilarityUtil {
             return len1;
         }
 
-        int d[][] = new int[len1 + 1][len2 + 1];
+        int[][] d = new int[len1 + 1][len2 + 1];
 
         //初始化第一列
         for (int i = 0; i <= len1; i++) {
