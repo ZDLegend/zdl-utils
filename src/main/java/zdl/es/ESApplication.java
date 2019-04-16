@@ -15,7 +15,7 @@ public class ESApplication {
     private static final String ip = "127.0.0.1";
     private static final String port = "9200";
 
-    public void initClient(){
+    public void initClient() {
         //建立es客户端
         restClient = RestClient.builder(new HttpHost(ip, Integer.valueOf(port))).build();
     }

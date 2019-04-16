@@ -2,12 +2,6 @@ package zdl.util;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-
 /**
  * 相似度比较
  *

@@ -2,7 +2,9 @@ package zdl.office;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -28,14 +30,14 @@ public class ExcelParseUtil {
             workbook = new HSSFWorkbook(is);
         } else if (fileName.endsWith(SUFFIX_2007)) {
             workbook = new XSSFWorkbook(is);
-        }else {
+        } else {
             System.out.println("非EXCEL文件");
             throw new RuntimeException("非EXCEL文件");
         }
         return workbook;
     }
 
-    public static List<ExcelInfo> parseWorkbookToMatrix(Workbook workbook){
+    public static List<ExcelInfo> parseWorkbookToMatrix(Workbook workbook) {
         List<ExcelInfo> excelInfos = new ArrayList<>();
 
         //依次解析每一个Sheet
@@ -46,12 +48,12 @@ public class ExcelParseUtil {
             excelInfos.add(excelInfo);
             rows.forEach(row -> {
                 List<String> s = parseRow(row);
-                if(excelInfo.getFirstRow() == null && rowIsFull(s)){
+                if (excelInfo.getFirstRow() == null && rowIsFull(s)) {
                     excelInfo.setFirstRow(s);
                     return;
                 }
 
-                if(excelInfo.getFirstRow() != null){
+                if (excelInfo.getFirstRow() != null) {
                     array.add(s);
                 }
             });
@@ -76,14 +78,14 @@ public class ExcelParseUtil {
     }
 
     //判断某一行是否全部填写
-    public static boolean rowIsFull(List<String> row){
+    public static boolean rowIsFull(List<String> row) {
 
-        if(row.size() == 0){
+        if (row.size() == 0) {
             return false;
         }
 
-        for(String cell : row){
-            if(StringUtils.isBlank(cell)){
+        for (String cell : row) {
+            if (StringUtils.isBlank(cell)) {
                 return false;
             }
         }
@@ -91,18 +93,18 @@ public class ExcelParseUtil {
     }
 
     //判断某一行是否全空
-    public static boolean rowIsBlank(List<String> row){
-        for(String cell : row){
-            if(StringUtils.isNotBlank(cell)){
+    public static boolean rowIsBlank(List<String> row) {
+        for (String cell : row) {
+            if (StringUtils.isNotBlank(cell)) {
                 return false;
             }
         }
         return true;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         File file = new File("C:\\Users\\zhangminghao5\\Desktop\\报告.xlsx");
-        try (InputStream is = new FileInputStream(file)){
+        try (InputStream is = new FileInputStream(file)) {
             List<ExcelInfo> json = parseWorkbookToMatrix(initWorkBook("报告.xlsx", is));
             System.out.println(json);
         } catch (IOException e) {

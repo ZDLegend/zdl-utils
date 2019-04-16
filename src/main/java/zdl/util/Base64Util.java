@@ -35,8 +35,8 @@ public class Base64Util {
         byte[] data = new byte[0];
         File file = new File(filePath);
         if (file.exists()) {
-            try(FileInputStream in = new FileInputStream(file);
-                ByteArrayOutputStream out = new ByteArrayOutputStream(2048)) {
+            try (FileInputStream in = new FileInputStream(file);
+                 ByteArrayOutputStream out = new ByteArrayOutputStream(2048)) {
                 byte[] cache = new byte[1024];
                 int nRead;
                 while ((nRead = in.read(cache)) != -1) {
@@ -59,8 +59,8 @@ public class Base64Util {
 
         destFile.createNewFile();
 
-        try(InputStream in = new ByteArrayInputStream(bytes);
-            OutputStream out = new FileOutputStream(destFile)) {
+        try (InputStream in = new ByteArrayInputStream(bytes);
+             OutputStream out = new FileOutputStream(destFile)) {
             byte[] cache = new byte[1024];
             int nRead;
             while ((nRead = in.read(cache)) != -1) {

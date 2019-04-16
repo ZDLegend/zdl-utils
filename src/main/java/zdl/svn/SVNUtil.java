@@ -12,7 +12,10 @@ import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author ZDLegend

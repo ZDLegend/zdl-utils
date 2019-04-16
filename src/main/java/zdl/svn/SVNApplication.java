@@ -34,7 +34,7 @@ public class SVNApplication {
     //	声明SVN客户端管理类
     public static SVNClientManager clientManager;
 
-    public static void init(){
+    public static void init() {
         /*
          * For using over http:// and https://
          */
@@ -58,7 +58,7 @@ public class SVNApplication {
             repositoryURL = SVNURL.parseURIEncoded(url);
             //根据URL实例化SVN版本库。
             //repository = SVNRepositoryFactory.create(repositoryURL);
-            repository = DAVRepositoryFactory.create(repositoryURL , null);
+            repository = DAVRepositoryFactory.create(repositoryURL, null);
         } catch (SVNException svne) {
             /*
              * 打印版本库实例创建失败的异常。
@@ -74,7 +74,7 @@ public class SVNApplication {
         repository.setAuthenticationManager(authManager);
     }
 
-    public static void main(String ... a){
+    public static void main(String... a) {
         init();
 
         try {

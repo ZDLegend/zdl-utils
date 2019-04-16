@@ -13,7 +13,6 @@ import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
-
 import java.util.Collections;
 
 /**
