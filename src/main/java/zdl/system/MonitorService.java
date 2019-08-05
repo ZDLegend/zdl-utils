@@ -124,7 +124,7 @@ public class MonitorService {
                     tokenStat.nextToken();
                     String cpuUsage = tokenStat.nextToken();
 
-                    double usage = Double.parseDouble(cpuUsage.substring(0, cpuUsage.indexOf('%')));
+                    double usage = Double.parseDouble(cpuUsage.replace("%", ""));
                     return (1 - usage / 100.00);
                 }
             }
