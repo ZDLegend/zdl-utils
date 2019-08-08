@@ -7,7 +7,7 @@ public class MonitorInfoBean {
     /**
      * 可使用内存.
      */
-    private long totalMemory;
+    private long jvmMemory;
 
     /**
      * 剩余内存.
@@ -17,7 +17,7 @@ public class MonitorInfoBean {
     /**
      * 最大可使用内存.
      */
-    private long maxMemory;
+    private long maxJvmMemory;
 
     /**
      * 操作系统.
@@ -65,12 +65,12 @@ public class MonitorInfoBean {
         this.freePhysicalMemorySize = freePhysicalMemorySize;
     }
 
-    public long getMaxMemory() {
-        return maxMemory;
+    public long getMaxJvmMemory() {
+        return maxJvmMemory;
     }
 
-    public void setMaxMemory(long maxMemory) {
-        this.maxMemory = maxMemory;
+    public void setMaxJvmMemory(long maxJvmMemory) {
+        this.maxJvmMemory = maxJvmMemory;
     }
 
     public String getOsName() {
@@ -81,12 +81,12 @@ public class MonitorInfoBean {
         this.osName = osName;
     }
 
-    public long getTotalMemory() {
-        return totalMemory;
+    public long getJvmMemory() {
+        return jvmMemory;
     }
 
-    public void setTotalMemory(long totalMemory) {
-        this.totalMemory = totalMemory;
+    public void setJvmMemory(long jvmMemory) {
+        this.jvmMemory = jvmMemory;
     }
 
     public long getTotalMemorySize() {

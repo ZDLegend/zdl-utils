@@ -65,9 +65,9 @@ public class MonitorService {
         MonitorInfoBean infoBean = new MonitorInfoBean();
         infoBean.setFreeMemory(freeMemory);
         infoBean.setFreePhysicalMemorySize(freePhysicalMemorySize);
-        infoBean.setMaxMemory(maxMemory);
+        infoBean.setMaxJvmMemory(maxMemory);
         infoBean.setOsName(osName);
-        infoBean.setTotalMemory(totalMemory);
+        infoBean.setJvmMemory(totalMemory);
         infoBean.setTotalMemorySize(totalMemorySize);
         infoBean.setTotalThread(totalThread);
         infoBean.setUsedMemory(usedMemory);
@@ -235,9 +235,9 @@ public class MonitorService {
         MonitorInfoBean monitorInfo = service.getMonitorInfoBean();
         System.out.println("cpu占有率=" + monitorInfo.getCpuRatio());
 
-        System.out.println("可使用内存=" + monitorInfo.getTotalMemory() / KB);
+        System.out.println("可使用内存=" + monitorInfo.getJvmMemory() / KB);
         System.out.println("剩余内存=" + monitorInfo.getFreeMemory() / KB);
-        System.out.println("最大可使用内存=" + monitorInfo.getMaxMemory() / KB);
+        System.out.println("最大可使用内存=" + monitorInfo.getMaxJvmMemory() / KB);
 
         System.out.println("操作系统=" + monitorInfo.getOsName());
         System.out.println("总的物理内存=" + monitorInfo.getTotalMemorySize() / KB);
