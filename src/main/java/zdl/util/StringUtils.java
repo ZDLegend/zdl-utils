@@ -7,13 +7,12 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by ZDLegend on 2016/8/16.
@@ -216,13 +215,12 @@ public final class StringUtils {
      * @param regex 表达式
      * @return 编译后的Pattern
      */
-    public static final Pattern compileRegex(String regex) {
-        Pattern pattern = PATTERN_CACHE.get(regex);
-        if (pattern == null) {
-            pattern = Pattern.compile(regex);
-            PATTERN_CACHE.put(regex, pattern);
-        }
-        return pattern;
+    public static Pattern compileRegex(String regex) {
+        return PATTERN_CACHE.computeIfAbsent(regex, p -> {
+            Pattern compile = Pattern.compile(p);
+            PATTERN_CACHE.put(regex, compile);
+            return compile;
+        });
     }
 
     /**
@@ -343,27 +341,27 @@ public final class StringUtils {
      * @return 字符串ASCII码
      */
     public static String toASCII(String str) {
-        StringBuffer strBuf = new StringBuffer();
+        StringBuilder strBuf = new StringBuilder();
         byte[] bGBK = str.getBytes();
-        for (int i = 0; i < bGBK.length; i++) {
-            strBuf.append(Integer.toHexString(bGBK[i] & 0xff));
+        for (byte b : bGBK) {
+            strBuf.append(String.format("%02X", b));
         }
         return strBuf.toString();
     }
 
     public static String toUnicode(String str) {
-        StringBuffer strBuf = new StringBuffer();
+        StringBuilder strBuf = new StringBuilder();
         char[] chars = str.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            strBuf.append("\\u").append(Integer.toHexString(chars[i]));
+        for (char aChar : chars) {
+            strBuf.append("\\u").append(Integer.toHexString(aChar));
         }
         return strBuf.toString();
     }
 
     public static String toUnicodeString(char[] chars) {
-        StringBuffer strBuf = new StringBuffer();
-        for (int i = 0; i < chars.length; i++) {
-            strBuf.append("\\u").append(Integer.toHexString(chars[i]));
+        StringBuilder strBuf = new StringBuilder();
+        for (char aChar : chars) {
+            strBuf.append("\\u").append(Integer.toHexString(aChar));
         }
         return strBuf.toString();
     }
@@ -379,8 +377,8 @@ public final class StringUtils {
      */
     public static boolean containsChineseChar(String str) {
         char[] chars = str.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            if (chars[i] >= CN_CHAR_START && chars[i] <= CN_CHAR_END) return true;
+        for (char aChar : chars) {
+            if (aChar >= CN_CHAR_START && aChar <= CN_CHAR_END) return true;
         }
         return false;
     }
@@ -473,7 +471,7 @@ public final class StringUtils {
      * @param obj 要判断的对象
      * @return 是否包含
      */
-    public static boolean contains(Object arr[], Object... obj) {
+    public static boolean contains(Object[] arr, Object... obj) {
         if (arr == null || obj == null || arr.length == 0) return false;
         return Arrays.asList(arr).containsAll(Arrays.asList(obj));
     }
@@ -619,6 +617,21 @@ public final class StringUtils {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 提取字符串中所有数字
+     *
+     * @param content 字符串
+     * @return 字符串中的所有数字数组
+     */
+    public static List<Integer> getDigit(String content) {
+        String[] cs = Pattern.compile("[^0-9]+").split(content);
+        return Stream.of(cs).distinct()
+                .filter(org.apache.commons.lang3.StringUtils::isNotBlank)
+                .filter(s -> s.length() < 5)
+                .map(Integer::valueOf)
+                .collect(Collectors.toList());
     }
 
     public static boolean isMessyCode(String strName) {
