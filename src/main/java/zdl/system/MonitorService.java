@@ -39,7 +39,7 @@ public class MonitorService {
                 .getOperatingSystemMXBean();
 
         // 操作系统
-        String osName = System.getProperty("os.name");
+        var osName = System.getProperty("os.name");
         // 总的物理内存
         long totalMemorySize = osmxb.getTotalPhysicalMemorySize() / KB;
         // 剩余的物理内存
