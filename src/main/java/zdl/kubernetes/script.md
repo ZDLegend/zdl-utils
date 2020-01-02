@@ -8,5 +8,8 @@
 * 编辑某个pod配置并重新加载: kubectl edit sts {serviceName}
 * 获取某个pod配置信息: kubectl describe pod {podName}
 
+### 文件
+* copy： kubectl cp {podName}:{pod filePath + fileName} {local filePath + fileName} 
+
 ### 实用
 * 在服务器上运行某个pod内的命令，不需要先进入pod内: kubectl exec -it {podName} -- {script}
