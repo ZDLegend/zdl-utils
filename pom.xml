@@ -11,6 +11,7 @@
     <modules>
         <module>zdl-common</module>
         <module>zdl-system</module>
+        <module>zdl-svn</module>
     </modules>
 
     <properties>
@@ -22,13 +23,6 @@
     </properties>
 
     <dependencies>
-
-        <!-- SVN 客户端 -->
-        <dependency>
-            <groupId>org.tmatesoft.svnkit</groupId>
-            <artifactId>svnkit</artifactId>
-            <version>1.9.0</version>
-        </dependency>
 
         <!-- ES 客户端 -->
         <dependency>

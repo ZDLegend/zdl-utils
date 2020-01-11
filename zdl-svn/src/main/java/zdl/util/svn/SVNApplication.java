@@ -1,4 +1,4 @@
-package zdl.svn;
+package zdl.util.svn;
 
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;

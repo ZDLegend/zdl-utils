@@ -1,4 +1,4 @@
-package zdl.svn;
+package zdl.util.svn;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
