@@ -6,7 +6,12 @@
 
     <groupId>zdl</groupId>
     <artifactId>utils</artifactId>
+    <packaging>pom</packaging>
     <version>1.0</version>
+    <modules>
+        <module>zdl-common</module>
+        <module>zdl-system</module>
+    </modules>
 
     <properties>
         <java.version>11</java.version>
@@ -32,24 +37,7 @@
             <version>6.0.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.47</version>
-        </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.7</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>3.17</version>
-        </dependency>
 
         <dependency>
             <groupId>io.fabric8</groupId>

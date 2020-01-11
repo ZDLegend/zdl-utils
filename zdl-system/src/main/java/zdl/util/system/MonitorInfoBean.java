@@ -1,4 +1,4 @@
-package zdl.system;
+package zdl.util.system;
 
 /**
  * Created by ZDLegend on 2019/8/3 11:05

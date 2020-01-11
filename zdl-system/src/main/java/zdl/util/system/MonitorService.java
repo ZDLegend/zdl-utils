@@ -1,4 +1,4 @@
-package zdl.system;
+package zdl.util.system;
 
 import com.sun.management.OperatingSystemMXBean;
 
