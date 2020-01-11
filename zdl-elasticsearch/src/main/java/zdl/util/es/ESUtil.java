@@ -1,4 +1,4 @@
-package zdl.es;
+package zdl.util.es;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
