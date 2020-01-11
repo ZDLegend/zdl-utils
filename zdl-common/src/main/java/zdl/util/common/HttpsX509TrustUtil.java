@@ -1,4 +1,4 @@
-package zdl.util;
+package zdl.util.common;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;

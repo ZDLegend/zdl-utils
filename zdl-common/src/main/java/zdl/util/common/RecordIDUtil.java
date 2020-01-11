@@ -1,4 +1,4 @@
-package zdl.util;
+package zdl.util.common;
 
 import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicInteger;
