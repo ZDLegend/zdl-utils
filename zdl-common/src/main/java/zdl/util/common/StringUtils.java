@@ -3,6 +3,7 @@ package zdl.util.common;
 import com.alibaba.fastjson.JSONArray;
 
 import java.io.*;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -27,6 +28,28 @@ public final class StringUtils {
     private static final Map<String, Pattern> PATTERN_CACHE = new ConcurrentHashMap<>();
 
     private StringUtils() {
+    }
+
+    /**
+     * 把带'='号的String中，'='号两遍的数据转为map
+     *
+     * @param queryString 被转换String
+     * @param charset     中文编码
+     * @return map
+     */
+    public static Map<String, String> queryStringToMap(String queryString, String charset) {
+        try {
+            Map<String, String> map = new HashMap<>();
+
+            String[] decode = URLDecoder.decode(queryString, charset).split("&");
+            for (String keyValue : decode) {
+                String[] kv = keyValue.split("[=]", 2);
+                map.put(kv[0], kv.length > 1 ? kv[1] : "");
+            }
+            return map;
+        } catch (UnsupportedEncodingException e) {
+            throw new UnsupportedOperationException(e);
+        }
     }
 
     /**
