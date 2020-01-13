@@ -17,6 +17,6 @@ public class ESApplication {
 
     public void initClient() {
         //建立es客户端
-        restClient = RestClient.builder(new HttpHost(ip, Integer.valueOf(port))).build();
+        restClient = RestClient.builder(new HttpHost(ip, Integer.parseInt(port))).build();
     }
 }
