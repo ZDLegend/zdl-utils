@@ -7,7 +7,7 @@
     <groupId>zdl</groupId>
     <artifactId>utils</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>2.0</version>
     <modules>
         <module>zdl-common</module>
         <module>zdl-system</module>
