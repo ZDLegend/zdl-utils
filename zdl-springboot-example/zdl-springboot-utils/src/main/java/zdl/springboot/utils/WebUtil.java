@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Web常用工具集，用于获取当前登录用户，请求信息等
  *
- * @since 3.0
+ * Created by ZDLegend on 2020/1/13 9:49
  */
 public class WebUtil {
 
