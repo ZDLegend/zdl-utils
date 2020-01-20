@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>zdl-springboot-example</artifactId>
-        <groupId>org.springframework.boot</groupId>
-        <version>2.1.7.RELEASE</version>
+        <groupId>zdl</groupId>
+        <version>2.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,6 +21,13 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>zdl</groupId>
+            <artifactId>zdl-springboot-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>
