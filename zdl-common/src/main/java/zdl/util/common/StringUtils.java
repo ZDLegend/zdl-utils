@@ -56,7 +56,7 @@ public final class StringUtils {
      * @apiNote sdk结构体中的字符串转换为byte[]
      */
     public static byte[] arrayCopy(byte[] dst, byte[] src) {
-        int minLen = dst.length < src.length ? dst.length : src.length;
+        int minLen = Math.min(dst.length, src.length);
         System.arraycopy(src, 0, dst, 0, minLen);
         return dst;
     }
