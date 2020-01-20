@@ -33,7 +33,7 @@ public final class AopUtils {
             }
 
             for (Class aClass : supers) {
-                if(aClass==null){
+                if (aClass == null) {
                     continue;
                 }
                 Method[] ims = new Method[1];

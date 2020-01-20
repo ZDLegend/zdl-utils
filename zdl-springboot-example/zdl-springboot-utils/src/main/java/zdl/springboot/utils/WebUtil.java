@@ -14,25 +14,26 @@ import java.util.Map;
 
 /**
  * Web常用工具集，用于获取当前登录用户，请求信息等
- *
+ * <p>
  * Created by ZDLegend on 2020/1/13 9:49
  */
 public class WebUtil {
 
-    public static Map<String,String> queryStringToMap(String queryString,String charset){
+    public static Map<String, String> queryStringToMap(String queryString, String charset) {
         try {
-            Map<String,String> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>();
 
-            String[] decode = URLDecoder.decode(queryString,charset).split("&");
+            String[] decode = URLDecoder.decode(queryString, charset).split("&");
             for (String keyValue : decode) {
-                String[] kv = keyValue.split("[=]",2);
-                map.put(kv[0],kv.length>1?kv[1]:"");
+                String[] kv = keyValue.split("[=]", 2);
+                map.put(kv[0], kv.length > 1 ? kv[1] : "");
             }
             return map;
         } catch (UnsupportedEncodingException e) {
             throw new UnsupportedOperationException(e);
         }
     }
+
     /**
      * 尝试获取当前请求的HttpServletRequest实例
      *
