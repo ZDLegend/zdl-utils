@@ -3,11 +3,13 @@ package zdl.springboot.utils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.EmbeddedValueResolverAware;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringValueResolver;
 
 /**
  * Created by ZDLegend on 2020/3/21 16:13
  */
+@Component
 public class ContextUtil implements ApplicationContextAware, EmbeddedValueResolverAware {
 
     private static ApplicationContext context;
