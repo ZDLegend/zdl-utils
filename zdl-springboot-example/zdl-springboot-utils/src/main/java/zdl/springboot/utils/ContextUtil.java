@@ -2,6 +2,7 @@ package zdl.springboot.utils;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.EmbeddedValueResolverAware;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringValueResolver;
@@ -44,5 +45,11 @@ public class ContextUtil implements ApplicationContextAware, EmbeddedValueResolv
 
     public static String getProperty(String key) {
         return resolver.resolveStringValue(String.format(KEY_FORMAT, key));
+    }
+
+    public static void shutdown() {
+        if(context instanceof ConfigurableApplicationContext) {
+            ((ConfigurableApplicationContext) context).close();
+        }
     }
 }
