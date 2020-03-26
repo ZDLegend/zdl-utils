@@ -1,4 +1,4 @@
-package zdl.springboot.utils;
+package zdl.util.common;
 
 import java.util.ResourceBundle;
 
