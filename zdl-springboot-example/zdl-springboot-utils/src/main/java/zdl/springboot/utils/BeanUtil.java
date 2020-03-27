@@ -14,7 +14,7 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
     /**
      * copy scr中非null的属性至target中
      */
-    public static void copyPropertiesIgnoreNull (Object src, Object target) {
+    public static void copyPropertiesIgnoreNull(Object src, Object target) {
         copyProperties(src, target, getNullPropertyNames(src));
     }
 

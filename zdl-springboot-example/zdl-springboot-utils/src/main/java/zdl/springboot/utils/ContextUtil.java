@@ -48,7 +48,7 @@ public class ContextUtil implements ApplicationContextAware, EmbeddedValueResolv
     }
 
     public static void shutdown() {
-        if(context instanceof ConfigurableApplicationContext) {
+        if (context instanceof ConfigurableApplicationContext) {
             ((ConfigurableApplicationContext) context).close();
         }
     }
