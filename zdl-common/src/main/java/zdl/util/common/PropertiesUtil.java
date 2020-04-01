@@ -21,7 +21,6 @@ public class PropertiesUtil {
     static {
         String files = getStringByKey("files");
         if(StringUtils.isNoneBlank()) {
-
             Stream.of(files.trim().split(","))
                     .map(name -> PropertiesUtil.class.getClassLoader().getResourceAsStream(name))
                     .filter(Objects::nonNull)
