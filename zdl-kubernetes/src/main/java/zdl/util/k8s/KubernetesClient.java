@@ -22,7 +22,7 @@ public class KubernetesClient extends DefaultKubernetesClient {
         super(config);
     }
 
-    public String getIpForPort(String podName) {
+    public String getIpForPod(String podName) {
         return this.pods()
                 .inNamespace(DEFAULT_NAME_SPACE)
                 .withName(podName)
