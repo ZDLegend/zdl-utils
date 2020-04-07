@@ -533,19 +533,7 @@
     "end_time": 1578898534714,
     "device_ids": null,
     "page_no": 1,
-    "page_size": 10,
-    "order_info": null,
-    "conditions":[
-        {
-            "operator":"eq",
-            "key":"carry_bag",
-            "value":1
-        }
-    ],
-    "algorithm_vendors":["华智"],
-    "algorithms": [
-        5004010003
-    ]
+    "page_size": 10
 }</nullif>
         <length>-1</length>
         <precision>-1</precision>
