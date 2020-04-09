@@ -3,6 +3,10 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
 
+    <!-- This settings.xml is from https://github.com/pentaho/pentaho-kettle/blob/master/README.md.
+       address is https://raw.githubusercontent.com/pentaho/maven-parent-poms/master/maven-support-files/settings.xml.
+     -->
+
     <!-- This is the recommended settings.xml for development of Hitachi Vantara projects. -->
 
     <!--
