@@ -11,7 +11,7 @@ import org.pentaho.di.job.JobMeta;
 public class Application {
     public static void main(String[] args) throws Exception {
         KettleEnvironment.init();
-        JobMeta jobMeta = new JobMeta("httpPostTest.kjb", null);
+        JobMeta jobMeta = new JobMeta("transformations/http_post_trans.kjb", null);
         Job job = new Job(null, jobMeta);
         job.setLogLevel(LogLevel.ROWLEVEL);
         job.start();
