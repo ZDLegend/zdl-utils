@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>httpPostTest</name>
+    <name>http_client_trans</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -427,9 +427,9 @@
     <clusterschemas>
     </clusterschemas>
     <created_user>-</created_user>
-    <created_date>2020/04/01 10:14:13.059</created_date>
+    <created_date>2020/04/11 09:34:33.855</created_date>
     <modified_user>-</modified_user>
-    <modified_date>2020/04/01 10:14:13.059</modified_date>
+    <modified_date>2020/04/11 09:34:33.855</modified_date>
     <key_for_session_key/>
     <is_key_private>N</is_key_private>
   </info>
@@ -442,17 +442,7 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>HTTP client</from>
-      <to>HTTP post</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>REST client</from>
-      <to>HTTP client</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>HTTP post</from>
       <to>JSON output</to>
       <enabled>Y</enabled>
     </hop>
@@ -470,7 +460,7 @@
     </partitioning>
     <applicationType>JSON</applicationType>
     <method>POST</method>
-    <url>http://192.168.121.199:8087/api/viid/v1/person/prop-retrieval</url>
+    <url>http://192.168.121.215:8087/api/zdl/users</url>
     <urlInField>N</urlInField>
     <dynamicMethod>N</dynamicMethod>
     <methodFieldName/>
@@ -504,8 +494,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>192</xloc>
-      <yloc>160</yloc>
+      <xloc>416</xloc>
+      <yloc>208</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -531,9 +521,10 @@
         <nullif>{
     "start_time": 1558812134714,
     "end_time": 1578898534714,
-    "device_ids": null,
+    "id": null,
     "page_no": 1,
-    "page_size": 10
+    "page_size": 10,
+    "name": null
 }</nullif>
         <length>-1</length>
         <precision>-1</precision>
@@ -554,98 +545,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>80</xloc>
-      <yloc>160</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>HTTP client</name>
-    <type>HTTP</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <url>http://192.168.121.199:8093/api/fds/cache/disposition/map</url>
-    <urlInField>N</urlInField>
-    <urlField/>
-    <encoding>UTF-8</encoding>
-    <httpLogin/>
-    <httpPassword>Encrypted </httpPassword>
-    <proxyHost/>
-    <proxyPort/>
-    <socketTimeout>10000</socketTimeout>
-    <connectionTimeout>10000</connectionTimeout>
-    <closeIdleConnectionsTime>-1</closeIdleConnectionsTime>
-    <lookup>
-    </lookup>
-    <result>
-      <name>httpGet</name>
-      <code/>
-      <response_time/>
-      <response_header/>
-    </result>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>288</xloc>
-      <yloc>160</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>HTTP post</name>
-    <type>HTTPPOST</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <postafile>N</postafile>
-    <encoding>UTF-8</encoding>
-    <url>http://192.168.121.199:8087/api/viid/v1/person/prop-retrieval</url>
-    <urlInField>N</urlInField>
-    <urlField/>
-    <requestEntity>body</requestEntity>
-    <httpLogin/>
-    <httpPassword>Encrypted </httpPassword>
-    <proxyHost/>
-    <proxyPort/>
-    <socketTimeout>10000</socketTimeout>
-    <connectionTimeout>10000</connectionTimeout>
-    <closeIdleConnectionsTime>-1</closeIdleConnectionsTime>
-    <lookup>
-      </lookup>
-    <result>
-      <name>post</name>
-      <code/>
-      <response_time/>
-      <response_header/>
-    </result>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>384</xloc>
-      <yloc>160</yloc>
+      <xloc>304</xloc>
+      <yloc>208</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -668,7 +569,7 @@
     <encoding>UTF-8</encoding>
     <addtoresult>N</addtoresult>
     <file>
-      <name>${Internal.Entry.Current.Directory}/2345</name>
+      <name>C:\code\pdi-ce-9.0.0.0-423\2345_0.json</name>
       <extention>json</extention>
       <append>N</append>
       <split>N</split>
@@ -680,18 +581,6 @@
       <servlet_output>N</servlet_output>
     </file>
     <fields>
-      <field>
-        <name>result</name>
-        <element>result</element>
-      </field>
-      <field>
-        <name>httpGet</name>
-        <element>httpGet</element>
-      </field>
-      <field>
-        <name>post</name>
-        <element>post</element>
-      </field>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -702,8 +591,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>464</xloc>
-      <yloc>160</yloc>
+      <xloc>528</xloc>
+      <yloc>208</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
