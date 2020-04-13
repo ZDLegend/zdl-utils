@@ -2,10 +2,11 @@ package zdl.util.office;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -20,22 +21,24 @@ import java.util.List;
  * @create 2018/5/7
  */
 
-public class ExcelParseUtil {
+public class ExcelReader {
 
-    private static final String SUFFIX_2003 = ".xls";
-    private static final String SUFFIX_2007 = ".xlsx";
+//    private static final String SUFFIX_2003 = ".xls";
+//    private static final String SUFFIX_2007 = ".xlsx";
 
-    public static Workbook initWorkBook(String fileName, InputStream is) throws IOException {
-        Workbook workbook;
-        if (fileName.endsWith(SUFFIX_2003)) {
-            workbook = new HSSFWorkbook(is);
-        } else if (fileName.endsWith(SUFFIX_2007)) {
-            workbook = new XSSFWorkbook(is);
-        } else {
-            System.out.println("非EXCEL文件");
-            throw new RuntimeException("非EXCEL文件");
-        }
-        return workbook;
+    public static Workbook initWorkBook(InputStream is, String password) throws IOException {
+        return WorkbookFactory.create(is, password);
+    }
+
+    public static Workbook initWorkBook(File excelFile, String password) throws IOException {
+        return WorkbookFactory.create(excelFile, password);
+    }
+
+    /**
+     * 对于大数据的Xlsx文件，POI3.8提供了SXSSFSXSSFWorkbook类，采用缓存方式进行大批量写文件。
+     */
+    public static Workbook initBigExcel(InputStream is) throws IOException {
+        return new SXSSFWorkbook(new XSSFWorkbook(is));
     }
 
     public static List<ExcelInfo> parseWorkbookToMatrix(Workbook workbook) {
@@ -69,8 +72,6 @@ public class ExcelParseUtil {
     private static List<String> parseRow(Row row) {
         List<String> rst = new ArrayList<>();
         row.forEach(cell -> {
-            //定义每一个cell的数据类型
-            cell.setCellType(CellType.STRING);
             //取出cell中的value
             rst.add(cell.getStringCellValue().replace(" ", "").trim());
         });
@@ -99,7 +100,7 @@ public class ExcelParseUtil {
     public static void main(String[] args) {
         File file = new File("C:\\Users\\zhangminghao5\\Desktop\\报告.xlsx");
         try (InputStream is = new FileInputStream(file)) {
-            List<ExcelInfo> json = parseWorkbookToMatrix(initWorkBook("报告.xlsx", is));
+            List<ExcelInfo> json = parseWorkbookToMatrix(initWorkBook(is, null));
             System.out.println(json);
         } catch (IOException e) {
             e.printStackTrace();
