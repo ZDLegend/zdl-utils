@@ -1,5 +1,6 @@
 package zdl.util.office;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
@@ -79,27 +80,20 @@ public class ExcelParseUtil {
 
     //判断某一行是否全部填写
     public static boolean rowIsFull(List<String> row) {
-
-        if (row.size() == 0) {
+        if (CollectionUtils.isEmpty(row)) {
             return false;
+        } else {
+            return row.stream().noneMatch(StringUtils::isBlank);
         }
-
-        for (String cell : row) {
-            if (StringUtils.isBlank(cell)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     //判断某一行是否全空
     public static boolean rowIsBlank(List<String> row) {
-        for (String cell : row) {
-            if (StringUtils.isNotBlank(cell)) {
-                return false;
-            }
+        if (CollectionUtils.isEmpty(row)) {
+            return false;
+        } else {
+            return row.stream().noneMatch(StringUtils::isNotBlank);
         }
-        return true;
     }
 
     public static void main(String[] args) {
