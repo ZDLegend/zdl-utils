@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 
 import java.io.*;
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -27,11 +26,14 @@ public final class StringUtils {
      */
     private static final Map<String, Pattern> PATTERN_CACHE = new ConcurrentHashMap<>();
 
+    private static final char CN_CHAR_START = '\u4e00';
+    private static final char CN_CHAR_END = '\u9fa5';
+
     private StringUtils() {
     }
 
     /**
-     * 把带'='号的String中，'='号两遍的数据转为map
+     * 把带'='号的String中，'='号两边的数据转为map
      *
      * @param queryString 被转换String
      * @param charset     中文编码
@@ -53,7 +55,7 @@ public final class StringUtils {
     }
 
     /**
-     * @apiNote sdk结构体中的字符串转换为byte[]
+     * byte[]数组拷贝
      */
     public static byte[] arrayCopy(byte[] dst, byte[] src) {
         int minLen = Math.min(dst.length, src.length);
@@ -62,7 +64,7 @@ public final class StringUtils {
     }
 
     /**
-     * @apiNote 给结构体中的字符串赋值
+     * 字符串转byte数组
      */
     public static void setSdkBytes(byte[] dst, String content) {
         byte[] srcBytes = content.getBytes(StandardCharsets.UTF_8);
@@ -71,7 +73,7 @@ public final class StringUtils {
     }
 
     /**
-     * @apiNote JSONArray转byte[]
+     * JSONArray转byte[]
      * <p>
      * JSONArray转换为C代码中Char[x][y]
      * 既JSONArray -> byte[x*y] -> Char[x][y]
@@ -94,7 +96,10 @@ public final class StringUtils {
     }
 
     /**
-     * @apiNote 生成随机字符串
+     * 生成人鱼长度的随机字符串
+     *
+     * @param length 字符串长度
+     * @return 随机字符串
      */
     public static String getRandomString(int length) {
         String base = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -107,7 +112,7 @@ public final class StringUtils {
     }
 
     /**
-     * @apiNote 生成MD5摘要值
+     * 生成MD5摘要值
      */
     public static String md5Util(String ps) throws NoSuchAlgorithmException {
         if (null != ps) {
@@ -121,7 +126,7 @@ public final class StringUtils {
     }
 
     /**
-     * @apiNote二进制转十六进制
+     * 二进制转十六进制
      */
     public static String bytesToHex(byte[] bytes) {
         StringBuilder md5str = new StringBuilder();
@@ -143,14 +148,14 @@ public final class StringUtils {
     }
 
     /**
-     * @apiNote byte[]转String
+     * byte[]转String
      */
     public static String bytesToString(byte[] obj) {
 
-        /* trim()去掉末尾的 \u0020 也就是空格 */
-        String str = new String(obj, Charset.forName("UTF-8")).trim();
+        //trim()去掉末尾的 \u0020 也就是空格
+        String str = new String(obj, StandardCharsets.UTF_8).trim();
 
-        /* 去掉末尾的0 */
+        //去掉末尾的0
         if (str.indexOf('\u0000') > 0) {
             str = str.substring(0, str.indexOf('\u0000'));
         }
@@ -160,9 +165,9 @@ public final class StringUtils {
 
 
     /**
-     * @apiNote 去除结构体成员名中的前缀
+     * 去除驼峰结构中的前缀
      */
-    public static String removLowerHaed(String word) {
+    public static String removeLowerHead(String word) {
 
         int index = 0;
         for (int i = 0; i < word.length(); i++) {
@@ -178,7 +183,7 @@ public final class StringUtils {
     }
 
     /**
-     * @apiNote 把URL中的空格（%20）转化成普通的字符串空格
+     * 把URL中的空格（%20）转化成普通的字符串空格
      */
     public static String spaceString(String url) {
         if (url.contains("%20")) {
@@ -188,7 +193,7 @@ public final class StringUtils {
     }
 
     /**
-     * @apiNote 将字符串进行BASE64编码
+     * 将字符串进行BASE64编码
      */
     public static String getBASE64(String s) {
         if (s == null) return null;
@@ -196,18 +201,21 @@ public final class StringUtils {
     }
 
     /**
-     * @apiNote 将字符串进行BASE64解码
+     * 将字符串进行BASE64解码
      */
     public static String getFromBASE64(String s) {
         if (s == null) return null;
         try {
             byte[] b = Base64.getDecoder().decode(s);
-            return new String(b, Charset.forName("UTF-8")).trim();
+            return new String(b, StandardCharsets.UTF_8).trim();
         } catch (Exception e) {
             return null;
         }
     }
 
+    /**
+     * 流转字节
+     */
     public static byte[] input2byte(InputStream inStream)
             throws IOException {
         ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
@@ -233,7 +241,7 @@ public final class StringUtils {
     }
 
     /**
-     * 编译一个正则表达式，并且进行缓存,如果换成已存在则使用缓存
+     * 编译一个正则表达式，并且进行缓存，如果换成已存在则使用缓存
      *
      * @param regex 表达式
      * @return 编译后的Pattern
@@ -284,7 +292,7 @@ public final class StringUtils {
      * @param str 下划线命名格式
      * @return 驼峰命名格式
      */
-    public static final String underScoreCase2CamelCase(String str) {
+    public static String underScoreCase2CamelCase(String str) {
         if (!str.contains("_")) return str;
         StringBuilder sb = new StringBuilder();
         char[] chars = str.toCharArray();
@@ -312,11 +320,10 @@ public final class StringUtils {
      * @param str 驼峰命名格式
      * @return 下划线命名格式
      */
-    public static final String camelCase2UnderScoreCase(String str) {
+    public static String camelCase2UnderScoreCase(String str) {
         StringBuilder sb = new StringBuilder();
         char[] chars = str.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
+        for (char c : chars) {
             if (Character.isUpperCase(c)) {
                 sb.append("_").append(Character.toLowerCase(c));
             } else {
@@ -389,9 +396,6 @@ public final class StringUtils {
         return strBuf.toString();
     }
 
-    static final char CN_CHAR_START = '\u4e00';
-    static final char CN_CHAR_END = '\u9fa5';
-
     /**
      * 是否包含中文字符
      *
@@ -406,27 +410,6 @@ public final class StringUtils {
         return false;
     }
 
-    /**
-     * 对象是否为无效值
-     *
-     * @param obj 要判断的对象
-     * @return 是否为有效值（不为null 和 "" 字符串）
-     */
-    public static boolean isNullOrEmpty(Object obj) {
-        return obj == null || "".equals(obj.toString());
-    }
-
-    /**
-     * 参数是否是有效数字 （整数或者小数）
-     *
-     * @param obj 参数（对象将被调用string()转为字符串类型）
-     * @return 是否是数字
-     */
-    public static boolean isNumber(Object obj) {
-        if (obj instanceof Number) return true;
-        return isInt(obj) || isDouble(obj);
-    }
-
     public static String matcherFirst(String patternStr, String text) {
         Pattern pattern = compileRegex(patternStr);
         Matcher matcher = pattern.matcher(text);
@@ -435,34 +418,6 @@ public final class StringUtils {
             group = matcher.group();
         }
         return group;
-    }
-
-    /**
-     * 参数是否是有效整数
-     *
-     * @param obj 参数（对象将被调用string()转为字符串类型）
-     * @return 是否是整数
-     */
-    public static boolean isInt(Object obj) {
-        if (isNullOrEmpty(obj))
-            return false;
-        if (obj instanceof Integer)
-            return true;
-        return obj.toString().matches("[-+]?\\d+");
-    }
-
-    /**
-     * 字符串参数是否是double
-     *
-     * @param obj 参数（对象将被调用string()转为字符串类型）
-     * @return 是否是double
-     */
-    public static boolean isDouble(Object obj) {
-        if (isNullOrEmpty(obj))
-            return false;
-        if (obj instanceof Double || obj instanceof Float)
-            return true;
-        return compileRegex("[-+]?\\d+\\.\\d+").matcher(obj.toString()).matches();
     }
 
     /**
@@ -500,91 +455,6 @@ public final class StringUtils {
     }
 
     /**
-     * 将对象转为int值,如果对象无法进行转换,则使用默认值
-     *
-     * @param object       要转换的对象
-     * @param defaultValue 默认值
-     * @return 转换后的值
-     */
-    public static int toInt(Object object, int defaultValue) {
-        if (object instanceof Number)
-            return ((Number) object).intValue();
-        if (isInt(object)) {
-            return Integer.parseInt(object.toString());
-        }
-        if (isDouble(object)) {
-            return (int) Double.parseDouble(object.toString());
-        }
-        return defaultValue;
-    }
-
-    /**
-     * 将对象转为int值,如果对象不能转为,将返回0
-     *
-     * @param object 要转换的对象
-     * @return 转换后的值
-     */
-    public static int toInt(Object object) {
-        return toInt(object, 0);
-    }
-
-    /**
-     * 将对象转为long类型,如果对象无法转换,将返回默认值
-     *
-     * @param object       要转换的对象
-     * @param defaultValue 默认值
-     * @return 转换后的值
-     */
-    public static long toLong(Object object, long defaultValue) {
-        if (object instanceof Number)
-            return ((Number) object).longValue();
-        if (isInt(object)) {
-            return Long.parseLong(object.toString());
-        }
-        if (isDouble(object)) {
-            return (long) Double.parseDouble(object.toString());
-        }
-        return defaultValue;
-    }
-
-    /**
-     * 将对象转为 long值,如果无法转换,则转为0
-     *
-     * @param object 要转换的对象
-     * @return 转换后的值
-     */
-    public static long toLong(Object object) {
-        return toLong(object, 0);
-    }
-
-    /**
-     * 将对象转为Double,如果对象无法转换,将使用默认值
-     *
-     * @param object       要转换的对象
-     * @param defaultValue 默认值
-     * @return 转换后的值
-     */
-    public static double toDouble(Object object, double defaultValue) {
-        if (object instanceof Number)
-            return ((Number) object).doubleValue();
-        if (isNumber(object)) {
-            return Double.parseDouble(object.toString());
-        }
-        if (null == object) return defaultValue;
-        return 0;
-    }
-
-    /**
-     * 将对象转为Double,如果对象无法转换,将使用默认值0
-     *
-     * @param object 要转换的对象
-     * @return 转换后的值
-     */
-    public static double toDouble(Object object) {
-        return toDouble(object, 0);
-    }
-
-    /**
      * 分隔字符串,根据正则表达式分隔字符串,只分隔首个,剩下的的不进行分隔,如: 1,2,3,4 将分隔为 ['1','2,3,4']
      *
      * @param str   要分隔的字符串
@@ -593,40 +463,6 @@ public final class StringUtils {
      */
     public static String[] splitFirst(String str, String regex) {
         return str.split(regex, 2);
-    }
-
-    /**
-     * 将对象转为字符串,如果对象为null,则返回null,而不是"null"
-     *
-     * @param object 要转换的对象
-     * @return 转换后的对象
-     */
-    public static String toString(Object object) {
-        return toString(object, null);
-    }
-
-    /**
-     * 将对象转为字符串,如果对象为null,则使用默认值
-     *
-     * @param object       要转换的对象
-     * @param defaultValue 默认值
-     * @return 转换后的字符串
-     */
-    public static String toString(Object object, String defaultValue) {
-        if (object == null) return defaultValue;
-        return String.valueOf(object);
-    }
-
-    /**
-     * 将对象转为String后进行分割，如果为对象为空或者空字符,则返回null
-     *
-     * @param object 要分隔的对象
-     * @param regex  分隔规则
-     * @return 分隔后的对象
-     */
-    public static final String[] toStringAndSplit(Object object, String regex) {
-        if (isNullOrEmpty(object)) return null;
-        return String.valueOf(object).split(regex);
     }
 
     private static boolean isChinese(char c) {
@@ -675,10 +511,6 @@ public final class StringUtils {
             }
         }
         float result = count / chLength;
-        if (result > 0.4) {
-            return true;
-        } else {
-            return false;
-        }
+        return result > 0.4;
     }
 }
