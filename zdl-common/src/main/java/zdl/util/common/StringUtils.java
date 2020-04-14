@@ -513,4 +513,26 @@ public final class StringUtils {
         float result = count / chLength;
         return result > 0.4;
     }
+
+    /**
+     * 字符串模糊匹配
+     * 模板字符串中'*'代表多位，'?'代表一位，例如：zd*ge?? 和 zdlegend 可以匹配
+     *
+     * @param regex    被匹配字符串
+     * @param template 模板字符串
+     * @return 是否匹配
+     */
+    public static boolean stringVagueMatch(String regex, String template) {
+
+        if (org.apache.commons.lang3.StringUtils.isBlank(regex)
+                || org.apache.commons.lang3.StringUtils.isBlank(template)) {
+            return false;
+        }
+
+        //正则表达式转换
+        String input = "^" + template.replace("*", "([\\S]*)")
+                .replace("?", "([\\S])").trim() + "$";
+        //正则表达式匹配
+        return Pattern.compile(regex).matcher(input).find();
+    }
 }
