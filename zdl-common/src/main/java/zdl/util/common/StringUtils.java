@@ -421,40 +421,6 @@ public final class StringUtils {
     }
 
     /**
-     * 判断一个对象是否为boolean类型,包括字符串中的true和false
-     *
-     * @param obj 要判断的对象
-     * @return 是否是一个boolean类型
-     */
-    public static boolean isBoolean(Object obj) {
-        if (obj instanceof Boolean) return true;
-        String strVal = String.valueOf(obj);
-        return "true".equalsIgnoreCase(strVal) || "false".equalsIgnoreCase(strVal);
-    }
-
-    /**
-     * 对象是否为true
-     *
-     * @param obj
-     * @return
-     */
-    public static boolean isTrue(Object obj) {
-        return "true".equals(String.valueOf(obj));
-    }
-
-    /**
-     * 判断一个数组里是否包含指定对象
-     *
-     * @param arr 对象数组
-     * @param obj 要判断的对象
-     * @return 是否包含
-     */
-    public static boolean contains(Object[] arr, Object... obj) {
-        if (arr == null || obj == null || arr.length == 0) return false;
-        return Arrays.asList(arr).containsAll(Arrays.asList(obj));
-    }
-
-    /**
      * 分隔字符串,根据正则表达式分隔字符串,只分隔首个,剩下的的不进行分隔,如: 1,2,3,4 将分隔为 ['1','2,3,4']
      *
      * @param str   要分隔的字符串

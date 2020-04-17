@@ -148,13 +148,13 @@ public class ClassUtil {
         if (instanceOf(value.getClass(), type)) {
             newVal = value;
         } else if (type == Integer.class || type == int.class) {
-            newVal = StringUtils.toInt(value);
+            newVal = ObjectUtil.toInt(value);
         } else if (type == Double.class || type == double.class || type == Float.class || type == float.class) {
-            newVal = StringUtils.toDouble(value);
+            newVal = ObjectUtil.toDouble(value);
         } else if (type == Long.class || type == long.class) {
-            newVal = StringUtils.toLong(value);
+            newVal = ObjectUtil.toLong(value);
         } else if (type == Boolean.class || type == boolean.class) {
-            newVal = StringUtils.isTrue(value);
+            newVal = ObjectUtil.isTrue(value);
         } else if (type == String.class) {
             newVal = String.valueOf(value);
         }
