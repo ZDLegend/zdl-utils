@@ -16,10 +16,10 @@ public class Solution {
      */
     public int[] twoSum(int[] nums, int target) {
         HashMap<Integer, Integer> table = new HashMap<>();
-        for(int i = 0; i < nums.length; i++) {
+        for (int i = 0; i < nums.length; i++) {
             int res = target - nums[i];
             table.put(res, i);
-            if(table.containsKey(res)) {
+            if (table.containsKey(res)) {
                 return new int[]{i, table.get(res)};
             }
         }
