@@ -72,7 +72,7 @@ public class ThreadLocalUtils {
      * @see ClassCastException
      */
     public static <T> T get(String key) {
-        return ((T) local.get().get(key));
+        return (T) local.get().get(key);
     }
 
     /**
@@ -82,11 +82,11 @@ public class ThreadLocalUtils {
      * @since 3.0
      */
     public static <T> T get(String key, Supplier<T> supplierOnNull) {
-        return ((T) local.get().computeIfAbsent(key, k -> supplierOnNull.get()));
+        return (T) local.get().computeIfAbsent(key, k -> supplierOnNull.get());
     }
 
     /**
-     * 获取一个值后然后删除掉
+     * 获取一个值后然后删除掉（防止内存溢出）
      *
      * @param key 键
      * @param <T> 值类型
