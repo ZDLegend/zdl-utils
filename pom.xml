@@ -18,6 +18,7 @@
         <module>zdl-springboot-example</module>
         <module>zdl-kettle</module>
         <module>zdl-leetcode</module>
+        <module>zdl-javassist</module>
     </modules>
 
     <properties>
