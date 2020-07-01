@@ -3,6 +3,12 @@ package zdl.util.common;
 /**
  * 常用正则表达式
  *
+ * example:
+ *     //效验QQ号（要求：5-15位数字，0不能开头）
+ *     public static boolean checkQQ(String qq) {
+ *         return qq.matches(QQ_MATCHER.getRegex());
+ *     }
+ *
  * @author ZDLegend
  * @create 2020/07/01
  */
@@ -60,14 +66,15 @@ public enum Regexs {
     STRING_CN_ENG_NUM_2_MATCHER("^[\\u4E00-\\u9FA5A-Za-z0-9]{2,20}$", "中文、英文、数字但不包括下划线等符号"),
     STRING_SPECIAL_MATCHER("[^%&',;=?$\\x22]+", "可以输入含有^%&',;=?$\\\"等字符"),
     STRING_NO_SPECIAL_MATCHER("[^~\\x22]+", "禁止输入含有~的字符"),
+    STRING_FULL_WIDTH_MATCHER("[^uFF00-uFFFF]", "全角字符"),
 
     /**
      * 特殊需求表达式
      */
     EMAIL_MATCHER("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$", "Email地址"),
     DOMAIN_MATCHER("[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(/.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+/.?", "域名"),
-    WEB_1_MATCHER("[a-zA-z]+://[^\\s]*", "InternetURL"),
-    WEB_2_MATCHER("^http://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$", "InternetURL"),
+    WEB_MATCHER("[a-zA-z]+://[^\\s]*", "InternetURL"),
+    HTTP_MATCHER("^http://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$", "InternetURL"),
     PHONE_NUM_MATCHER("^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}$", "手机号码"),
     TEL_NUM_MATCHER("^(\\(\\d{3,4}-)|\\d{3.4}-)?\\d{7,8}$", "电话号码"),
     TEL_NUM_CN_MATCHER("\\d{3}-\\d{8}|\\d{4}-\\d{7}", "国内电话号码"),
@@ -93,13 +100,21 @@ public enum Regexs {
 
     //中国邮政编码为6位数字
     MAIL_MATCHER("[1-9]\\d{5}(?!\\d)", "中国邮政编码"),
-    QQL_MATCHER("[1-9][0-9]{4,}", "QQ号");
+    QQ_MATCHER("[1-9][0-9]{4,14}", "QQ号（0不能开头）");
 
-    private String regex;
-    private String message;
+    String regex;
+    String message;
 
     Regexs(String regex, String message) {
         this.regex = regex;
         this.message = message;
+    }
+
+    public String getRegex() {
+        return regex;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }
