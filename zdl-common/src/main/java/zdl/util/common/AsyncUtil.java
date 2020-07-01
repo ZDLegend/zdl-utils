@@ -48,7 +48,7 @@ public class AsyncUtil {
                 });
     }
 
-    public static <V> CompletableFuture handle(V obj, Consumer<V> handle, Consumer<Throwable> exception) {
+    public static <V> CompletableFuture<Void> handle(V obj, Consumer<V> handle, Consumer<Throwable> exception) {
         return CompletableFuture.runAsync(() -> handle.accept(obj), cachedThreadPool)
                 .whenComplete((v, throwable) -> {
                     if (throwable != null) {
@@ -57,7 +57,7 @@ public class AsyncUtil {
                 });
     }
 
-    public static CompletableFuture handle(Runnable runnable) {
+    public static CompletableFuture<Void> handle(Runnable runnable) {
         return CompletableFuture.runAsync(runnable, cachedThreadPool);
     }
 
