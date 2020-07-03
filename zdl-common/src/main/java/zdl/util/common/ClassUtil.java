@@ -33,7 +33,7 @@ public class ClassUtil {
                 return getAnnotation(clazz.getSuperclass(), annotation);
             }
         }
-        return ann;
+        return null;
     }
 
     /**
@@ -61,7 +61,7 @@ public class ClassUtil {
                 }
             }
         }
-        return ann;
+        return null;
     }
 
     public static Class<?> getGenericTypeByType(ParameterizedType genType, int index) {
@@ -87,10 +87,10 @@ public class ClassUtil {
      * @return 泛型
      */
     public static Class<?> getGenericType(Class clazz, int index) {
-        List<Type> arrys = new ArrayList<>();
-        arrys.add(clazz.getGenericSuperclass());
-        arrys.addAll(Arrays.asList(clazz.getGenericInterfaces()));
-        return arrys.stream()
+        List<Type> arrays = new ArrayList<>();
+        arrays.add(clazz.getGenericSuperclass());
+        arrays.addAll(Arrays.asList(clazz.getGenericInterfaces()));
+        return arrays.stream()
                 .filter(Objects::nonNull)
                 .map(type -> {
                     if (clazz != Object.class && !(type instanceof ParameterizedType)) {
