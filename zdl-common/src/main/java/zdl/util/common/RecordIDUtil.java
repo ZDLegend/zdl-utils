@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RecordIDUtil {
 
-    private static AtomicInteger atomicInteger = new AtomicInteger();
+    private static final AtomicInteger atomicInteger = new AtomicInteger();
     private static final int MAX_SEQ_NUM = (int) Math.pow(2, 17) - 1;
 
     private static final int NODE_NUM = 1;
