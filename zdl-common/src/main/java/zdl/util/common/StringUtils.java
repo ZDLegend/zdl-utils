@@ -9,6 +9,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -497,5 +498,25 @@ public final class StringUtils {
                 .replace("?", "([\\S])").trim() + "$";
         //正则表达式匹配
         return Pattern.compile(regex).matcher(input).find();
+    }
+
+    /**
+     * 字符串含有sql查询中like模糊查询中的特殊含义字符转换
+     */
+    private static final List<Character> specialChars = Arrays.asList('_', '%', '[', ']', '`', '\\');
+
+    public static String specialCharacters(String target) {
+        char[] chars = target.trim().toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (char character : chars) {
+            if (specialChars.contains(character)) {
+                sb.append("\\");
+            }
+            sb.append(character);
+            if ('{' == character) {
+                sb.append("}");
+            }
+        }
+        return sb.toString();
     }
 }
