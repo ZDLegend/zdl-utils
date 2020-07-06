@@ -76,6 +76,7 @@ public enum Regexs {
     DOMAIN_MATCHER("[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(/.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+/.?", "域名"),
     WEB_MATCHER("[a-zA-z]+://[^\\s]*", "InternetURL"),
     HTTP_MATCHER("^http://([\\w-]+\\.)+[\\w-]+(/[\\w-./?%&=]*)?$", "InternetURL"),
+    URL_MATCHER("^(f|ht){1}(tp|tps):\\\\/\\\\/([\\\\w-]+\\\\.)+[\\\\w-]+(\\\\/[\\\\w- ./?%&=]*)?", "提取URL链接"),
     PHONE_NUM_MATCHER("^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}$", "手机号码"),
     TEL_NUM_MATCHER("^(\\(\\d{3,4}-)|\\d{3.4}-)?\\d{7,8}$", "电话号码"),
     TEL_NUM_CN_MATCHER("\\d{3}-\\d{8}|\\d{4}-\\d{7}", "国内电话号码"),
