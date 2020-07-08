@@ -2,14 +2,14 @@ package zdl.util.common;
 
 /**
  * 常用正则表达式
- * <p>
- * example:
- * //效验QQ号（要求：5-15位数字，0不能开头）
- * public static boolean checkQQ(String qq) {
- * return qq.matches(QQ_MATCHER.getRegex());
- * }
  *
  * @author ZDLegend
+ * @implSpec <pre>{@code
+ *  example:
+ * //效验QQ号（要求：5-15位数字，0不能开头）
+ * public static boolean checkQQ(String qq) {
+ *     return qq.matches(QQ_MATCHER.getRegex());
+ * }}</pre>
  * @create 2020/07/01
  */
 public enum Regexs {
