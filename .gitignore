@@ -27,3 +27,9 @@
 
 ### VS Code ###
 .vscode/
+
+### Compiled class file
+*.class
+
+### log file
+*.log
