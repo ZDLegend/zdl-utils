@@ -19,6 +19,7 @@
         <module>zdl-kettle</module>
         <module>zdl-leetcode</module>
         <module>zdl-javassist</module>
+        <module>zdl-encryption</module>
     </modules>
 
     <properties>
