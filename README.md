@@ -8,8 +8,11 @@
 |---|-----|
 |common|说明详见class文件|
 |elasticsearch|es 搜索API封装|
-|kubernetes|K8S JAVA调用|
-|office|微软办公软甲的java调用|
+|encryption|加密算法集合|
+|javassist|javassist的基本使用|
+|kettle|kettle java api的基本使用|
+|kubernetes|K8S java api调用|
+|office|微软办公软件的java调用|
+|spring boot|spring boot相关使用（aop等）|
 |SVN|SVN API封装|
 |system|系统相关信息的java获取|
-|springboot|springboot相关使用|
