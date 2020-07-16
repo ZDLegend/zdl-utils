@@ -12,11 +12,26 @@
     <artifactId>zdl-elasticsearch</artifactId>
 
     <dependencies>
-        <!-- ES 客户端 -->
+        <!--
+        Java Low Level REST Client：elasticsearch client 低级别客户端。
+        它允许通过http请求与Elasticsearch集群进行通信。
+        API本身不负责数据的编码解码，由用户去编码解码。
+        它与所有的ElasticSearch版本兼容。
+        -->
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-client</artifactId>
-            <version>6.0.0</version>
+            <version>7.8.0</version>
+        </dependency>
+
+        <!--
+        Java High Level REST Client：Elasticsearch client官方高级客户端。
+        基于低级客户端，它定义的API,已经对请求与响应数据包进行编码解码。
+        -->
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>7.8.0</version>
         </dependency>
     </dependencies>
 

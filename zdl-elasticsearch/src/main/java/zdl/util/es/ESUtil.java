@@ -5,15 +5,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
+import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
-import org.elasticsearch.client.RestClient;
 
 import java.io.IOException;
-import java.util.Collections;
 
 /**
  * @author ZDLegend
@@ -25,26 +22,21 @@ public class ESUtil {
     /**
      * http请求方式
      */
-    private static String POST = "POST";
-    private static String PUT = "PUT";
-    private static String GET = "GET";
-    private static String DELETE = "DELETE";
+    private static final String POST = "POST";
+    private static final String PUT = "PUT";
+    private static final String GET = "GET";
+    private static final String DELETE = "DELETE";
 
     /**
      * ES索引TYPE
      */
-    private static String TYPE = "zdl";
-
-    /**
-     * ES客户端
-     */
-    private static RestClient restClient = ESApplication.restClient;
+    private static final String TYPE_CREATE = "_create";
+    private static final String TYPE_DOC = "_doc";
 
     /**
      * 插入数据
      *
      * @param index 索引
-     * @param type  类型
      * @param id    id
      * @param data  数据
      * @return ES返回消息的json格式信息
@@ -52,17 +44,14 @@ public class ESUtil {
      * @throws ClientProtocolException in case of an http protocol error
      * @throws ResponseException       in case Elasticsearch responded with a status code that indicated an error
      */
-    public static JSONObject insert(String index, String type, String id, String data) throws IOException {
+    public static JSONObject insert(String index, String id, String data) throws IOException {
 
-        if (StringUtils.isEmpty(type)) {
-            type = TYPE;
-        }
+        String endpoint = "/" + index + "/" + TYPE_CREATE + "/" + id;
 
-        HttpEntity entity = new NStringEntity(data, ContentType.APPLICATION_JSON);
+        Request request = new Request(POST, endpoint);
+        request.setJsonEntity(data);
 
-        String endpoint = "/" + index + "/" + type + "/" + id;
-
-        Response response = restClient.performRequest(PUT, endpoint, Collections.emptyMap(), entity);
+        Response response = ESApplication.ES_CLIENT.performRequest(request);
 
         String responseBody = consumeResponse(response);
 
@@ -77,17 +66,14 @@ public class ESUtil {
      * @throws ClientProtocolException in case of an http protocol error
      * @throws ResponseException       in case Elasticsearch responded with a status code that indicated an error
      */
-    public static JSONObject update(String index, String type, String id, String data) throws IOException {
+    public static JSONObject update(String index, String id, String data) throws IOException {
 
-        if (StringUtils.isEmpty(type)) {
-            type = TYPE;
-        }
+        String endpoint = "/" + index + "/" + TYPE_CREATE + "/" + id + "/_update";
 
-        HttpEntity entity = new NStringEntity(data, ContentType.APPLICATION_JSON);
+        Request request = new Request(PUT, endpoint);
+        request.setJsonEntity(data);
 
-        String endpoint = "/" + index + "/" + type + "/" + id + "/_update";
-
-        Response response = restClient.performRequest(POST, endpoint, Collections.emptyMap(), entity);
+        Response response = ESApplication.ES_CLIENT.performRequest(request);
 
         String responseBody = consumeResponse(response);
 
@@ -98,27 +84,24 @@ public class ESUtil {
      * 删除一条数据
      *
      * @param index 数据所在索引
-     * @param type  数据所在type
      * @param id    数据ID
      * @return ES返回消息的json格式信息
      * @throws IOException             in case of a problem or the connection was aborted
      * @throws ClientProtocolException in case of an http protocol error
      * @throws ResponseException       in case Elasticsearch responded with a status code that indicated an error
      */
-    public static JSONObject delete(String index, String type, String id) throws IOException {
-
-        if (StringUtils.isEmpty(type)) {
-            type = TYPE;
-        }
+    public static JSONObject delete(String index, String id) throws IOException {
 
         String endpoint;
         if (StringUtils.isEmpty(id)) {
             endpoint = "/" + index;
         } else {
-            endpoint = "/" + index + "/" + type + "/" + id;
+            endpoint = "/" + index + "/" + TYPE_DOC + "/" + id;
         }
 
-        Response response = restClient.performRequest(DELETE, endpoint, Collections.emptyMap());
+        Request request = new Request(DELETE, endpoint);
+
+        Response response = ESApplication.ES_CLIENT.performRequest(request);
 
         String responseBody = consumeResponse(response);
 
@@ -135,7 +118,7 @@ public class ESUtil {
      * @throws ResponseException       in case Elasticsearch responded with a status code that indicated an error
      */
     public static JSONObject deleteIndex(String index) throws IOException {
-        return delete(index, null, null);
+        return delete(index, null);
     }
 
     //读取json 内容
