@@ -16,8 +16,7 @@ import java.io.IOException;
  * @author ZDLegend
  * @create 2017/12/12
  */
-
-public class ESUtil {
+public class ESClient {
 
     /**
      * http请求方式
@@ -44,7 +43,7 @@ public class ESUtil {
      * @throws ClientProtocolException in case of an http protocol error
      * @throws ResponseException       in case Elasticsearch responded with a status code that indicated an error
      */
-    public static JSONObject insert(String index, String id, String data) throws IOException {
+    public static JSONObject index(String index, String id, String data) throws IOException {
 
         String endpoint = "/" + index + "/" + TYPE_CREATE + "/" + id;
 

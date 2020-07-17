@@ -5,10 +5,9 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 
 /**
- * @author zhangminghao5
+ * @author ZDLegend
  * @create 2018/5/21
  */
-
 public class ESApplication {
 
     /**
