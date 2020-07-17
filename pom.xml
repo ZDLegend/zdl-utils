@@ -20,6 +20,7 @@
         <module>zdl-leetcode</module>
         <module>zdl-javassist</module>
         <module>zdl-encryption</module>
+        <module>zdl-azkaban</module>
     </modules>
 
     <properties>
