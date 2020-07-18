@@ -1,5 +1,8 @@
 package zdl.util.azkaban;
 
+import com.alibaba.fastjson.JSONObject;
+import reactor.core.publisher.Mono;
+
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +18,7 @@ public interface AzkabanApi {
     /**
      * Azkaban登录接口，返回sessionId
      */
-    String login(String userName, String password) throws Exception;
+    String login(String userName, String password);
 
     /**
      * Azkaban创建project
@@ -39,7 +42,7 @@ public interface AzkabanApi {
      * @param file        上传文件
      * @return projectId
      */
-    String uploadZip(String projectName, File file);
+    JSONObject uploadZip(String projectName, File file);
 
     /**
      * 根据时间 创建调度任务
@@ -88,15 +91,15 @@ public interface AzkabanApi {
      * @param projectName project名
      * @return
      */
-    List<String> executeProject(String projectName);
+    List<String> executeProject(String projectName, String description);
 
-    String executeFlow(String projectName, String flow);
+    Mono<JSONObject> executeFlow(String projectName, String flow);
 
-    String cancelFlow(String execId);
+    void cancelFlow(String execId);
 
     Map<String, Object> getFlowExecution(int execId);
 
-    String fetchSchedule(int projectId, String flowId);
+    JSONObject fetchSchedule(int projectId, String flowId);
 
-    Map<String, Object> getProject(String projectName);
+    JSONObject fetchProjectFlows(String projectName);
 }
