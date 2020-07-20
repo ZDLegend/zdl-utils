@@ -123,23 +123,17 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
         bodyBuilder.part("ajax", "scheduleFlow");
         bodyBuilder.part("projectName", projectName);
         bodyBuilder.part("projectId", projectId);
-
-        bodyBuilder.part("flow", "2");
-        bodyBuilder.part("scheduleTime", "15,08,pm,PDT");
-        bodyBuilder.part("scheduleDate", "12/1/2017");
-        bodyBuilder.part("flowName", "test01 description");
+        bodyBuilder.part("flow", flow);
+        bodyBuilder.part("flowName", flowName);
 
         // 是否循环
-        bodyBuilder.part("is_recurring", "on");
+        bodyBuilder.part("is_recurring", recurring);
 
         // 循环周期 天 年 月等
-        // M Months
-        // w Weeks
-        // d Days
-        // h Hours
-        // m Minutes
-        // s Seconds
-        bodyBuilder.part("period", "30s"); // 经测试，定时任务支持至少是60秒或其整数倍
+        // 经测试，定时任务支持至少是60秒或其整数倍
+        bodyBuilder.part("period", period);
+
+        scheduleTimeInit(bodyBuilder, date);
 
         return client.post()
                 .uri(uriBuilder -> uriBuilder.path("/schedule")
@@ -148,6 +142,19 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+    }
+
+    private void scheduleTimeInit(MultipartBodyBuilder bodyBuilder, Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DATE);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        bodyBuilder.part("scheduleTime", hour + "," + minute + (hour > 11 ? ",pm,PDT" : ",am,EDT"));
+        bodyBuilder.part("scheduleDate", month + "/" + day + "/" + year);
     }
 
     @Override
@@ -189,7 +196,8 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
     public void downLoadZip(String projectName, String zipPath) {
         File file = new File(zipPath);
         try (OutputStream output = new FileOutputStream(file);) {
-            URL url = new URL(this.url + "/manager?session.id=" + sessionId + "&download=true&project=" + projectName);
+            URL url = new URL(this.url + "/manager?session.id=" + sessionId + "&download=true&project="
+                    + projectName);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(3 * 1000);
             InputStream inputStream = conn.getInputStream();
