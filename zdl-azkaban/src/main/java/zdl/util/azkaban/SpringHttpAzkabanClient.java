@@ -20,6 +20,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * 使用Spring Web Client 调用 Azkaban rest api
@@ -204,10 +205,11 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
         List<String> list = new ArrayList<>();
         project.forEach(flows -> {
             Mono<JSONObject> mono = executeFlow(projectName, String.valueOf(flows));
-            String execId = null;
             mono.doOnSuccess(json -> list.add(json.getString("execId")));
         });
-        return list;
+        return list.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     @Override
