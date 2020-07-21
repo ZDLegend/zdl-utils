@@ -10,6 +10,11 @@ import java.util.Map;
 
 /**
  * Azkaban HttpApi
+ * <p>
+ * Azkaban有三个核心的概念<p>
+ * <li>Project：一个project包含一个工作流；一个project对应一个flow
+ * <li>Flow：具体工作流，一个flow由一个或多个job组成
+ * <li>Job：一个工作流中的具体节点，可以是各种类型的执行任务
  *
  * @author ZDLegend
  */
