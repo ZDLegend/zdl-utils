@@ -242,6 +242,34 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
     }
 
     @Override
+    public void pauseFlow(String execId) {
+        JSONObject response = client.get()
+                .uri(uriBuilder -> uriBuilder.path("/executor")
+                        .queryParam("session.id", sessionId)
+                        .queryParam("ajax", "pauseFlow")
+                        .queryParam("execid", execId)
+                        .build())
+                .retrieve()
+                .bodyToMono(JSONObject.class)
+                .block();
+        responseErrorHandle(response, System.out::println);
+    }
+
+    @Override
+    public void resumeFlow(String execId) {
+        JSONObject response = client.get()
+                .uri(uriBuilder -> uriBuilder.path("/executor")
+                        .queryParam("session.id", sessionId)
+                        .queryParam("ajax", "resumeFlow")
+                        .queryParam("execid", execId)
+                        .build())
+                .retrieve()
+                .bodyToMono(JSONObject.class)
+                .block();
+        responseErrorHandle(response, System.out::println);
+    }
+
+    @Override
     public JSONObject fetchFlowExecution(int execId) {
         return client.get()
                 .uri(uriBuilder -> uriBuilder.path("/executor")

@@ -124,7 +124,7 @@ public interface AzkabanApi {
      *                    by white space that represents a set of times.
      *                    In azkaban, we use Quartz Cron Format.
      * @param flow        The name of the flow.
-     * @return return a scheduleId if success
+     * @return return a scheduleId if succeeds
      */
     String scheduleFlowByCron(String projectName, String cron, String flow);
 
@@ -194,6 +194,32 @@ public interface AzkabanApi {
      * @param execId The execution id.
      */
     void cancelFlow(String execId);
+
+    /**
+     * Pause a Flow Execution
+     * <p>Given an execution id, this API pauses a running flow.
+     * If an execution has already been paused, it will not return any error;
+     * if an execution is not running, it will return an error message.
+     * <li>Method: GET
+     * <li>Request URL: /executor?ajax=pauseFlow
+     * <li>Parameter Location: Request Query String
+     *
+     * @param execId The execution id.
+     */
+    void pauseFlow(String execId);
+
+    /**
+     * Resume a Flow Execution
+     * <p>Given an execution id, this API resumes a paused running flow.
+     * If an execution has already been resumed, it will not return any errors;
+     * if an execution is not runnning, it will return an error message.
+     * <li>Method: GET
+     * <li>Request URL: /executor?ajax=resumeFlow
+     * <li>Parameter Location: Request Query String
+     *
+     * @param execId The execution id.
+     */
+    void resumeFlow(String execId);
 
     /**
      * Fetch Flows of a Project(查询一个project下的所有flows)
