@@ -18,9 +18,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * 使用Spring Web Client 调用 Azkaban rest api
@@ -116,14 +117,13 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
     }
 
     @Override
-    public String scheduleEXEaFlow(String projectId, String projectName, String flow, String flowName,
-                                   String recurring, String period, Date date) {
+    public String schedulePeriodBasedFlow(String projectId, String projectName, String flowName,
+                                          String recurring, String period, Date date) {
         MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
         bodyBuilder.part("session.id", sessionId);
         bodyBuilder.part("ajax", "scheduleFlow");
         bodyBuilder.part("projectName", projectName);
         bodyBuilder.part("projectId", projectId);
-        bodyBuilder.part("flow", flow);
         bodyBuilder.part("flowName", flowName);
 
         // 是否循环
@@ -153,12 +153,17 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
 
+        //The time to schedule the flow.
+        // Example: 12,00,pm,PDT
+        // (Unless UTC is specified, Azkaban will take current server's default timezone instead)
         bodyBuilder.part("scheduleTime", hour + "," + minute + (hour > 11 ? ",pm,PDT" : ",am,EDT"));
+
+        //The date to schedule the flow. Example: 07/22/2014
         bodyBuilder.part("scheduleDate", month + "/" + day + "/" + year);
     }
 
     @Override
-    public String scheduleByCronEXEaFlow(String projectName, String cron, String flow, String flowName) {
+    public String scheduleFlowByCron(String projectName, String cron, String flow) {
         MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
         bodyBuilder.part("session.id", sessionId);
         bodyBuilder.part("project", projectName);
@@ -177,7 +182,7 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
     }
 
     @Override
-    public void cancelScheduleFlow(String scheduleId) {
+    public void unScheduleFlow(String scheduleId) {
         MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
         bodyBuilder.part("session.id", sessionId);
         bodyBuilder.part("action", "removeSched");
@@ -203,21 +208,8 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
             InputStream inputStream = conn.getInputStream();
             inputStream.transferTo(output);
         } catch (Exception e) {
-
+            System.err.println(e.getMessage());
         }
-    }
-
-    @Override
-    public List<String> executeProject(String projectName, String description) {
-        JSONArray project = fetchProjectFlows(projectName).getJSONArray("flows");
-        List<String> list = new ArrayList<>();
-        project.forEach(flows -> {
-            Mono<JSONObject> mono = executeFlow(projectName, String.valueOf(flows));
-            mono.doOnSuccess(json -> list.add(json.getString("execId")));
-        });
-        return list.stream()
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -228,6 +220,7 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
                         .queryParam("ajax", "executeFlow")
                         .queryParam("project", projectName)
                         .queryParam("flow", flow)
+                        //If a failure occurs, how should the execution behaves.
                         .queryParam("failureAction", "cancleTimmediately")
                         .build())
                 .retrieve()
@@ -239,7 +232,7 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
         JSONObject response = client.get()
                 .uri(uriBuilder -> uriBuilder.path("/executor")
                         .queryParam("session.id", sessionId)
-                        .queryParam("ajax", "removeSched")
+                        .queryParam("ajax", "cancelFlow")
                         .queryParam("execid", execId)
                         .build())
                 .retrieve()
@@ -249,7 +242,7 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
     }
 
     @Override
-    public Map<String, Object> getFlowExecution(int execId) {
+    public JSONObject fetchFlowExecution(int execId) {
         return client.get()
                 .uri(uriBuilder -> uriBuilder.path("/executor")
                         .queryParam("session.id", sessionId)
@@ -262,12 +255,73 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
     }
 
     @Override
+    public JSONObject fetchFlowExecutions(String projectName, String flowId, int start, int length) {
+        return client.get()
+                .uri(uriBuilder -> uriBuilder.path("/manager")
+                        .queryParam("session.id", sessionId)
+                        .queryParam("ajax", "fetchFlowExecutions")
+                        .queryParam("project", projectName)
+                        .queryParam("flow", flowId)
+                        .queryParam("start", start)
+                        .queryParam("length", length)
+                        .build())
+                .retrieve()
+                .bodyToMono(JSONObject.class)
+                .block();
+    }
+
+    @Override
     public JSONObject fetchSchedule(int projectId, String flowId) {
         return client.get()
                 .uri(uriBuilder -> uriBuilder.path("/schedule")
                         .queryParam("session.id", sessionId)
-                        .queryParam("ajax", "fetchexecflow")
-                        .queryParam("flowid", flowId)
+                        .queryParam("ajax", "fetchSchedule")
+                        .queryParam("flowId", flowId)
+                        .queryParam("projectId", projectId)
+                        .build())
+                .retrieve()
+                .bodyToMono(JSONObject.class)
+                .block();
+    }
+
+    @Override
+    public JSONArray fetchRunningExecOfFlow(String projectName, String flowId) {
+        return client.get()
+                .uri(uriBuilder -> uriBuilder.path("/executor")
+                        .queryParam("session.id", sessionId)
+                        .queryParam("ajax", "getRunning")
+                        .queryParam("project", projectName)
+                        .queryParam("flow", flowId)
+                        .build())
+                .retrieve()
+                .bodyToMono(JSONArray.class)
+                .block();
+    }
+
+    @Override
+    public JSONObject fetchExecJobLogs(String execId, String jobId, int offset, int length) {
+        return client.get()
+                .uri(uriBuilder -> uriBuilder.path("/executor")
+                        .queryParam("session.id", sessionId)
+                        .queryParam("ajax", "fetchExecJobLogs")
+                        .queryParam("execid", execId)
+                        .queryParam("jobId", jobId)
+                        .queryParam("offset", offset)
+                        .queryParam("length", length)
+                        .build())
+                .retrieve()
+                .bodyToMono(JSONObject.class)
+                .block();
+    }
+
+    @Override
+    public JSONObject fetchExecFlowUpdate(String execId, long lastUpdateTime) {
+        return client.get()
+                .uri(uriBuilder -> uriBuilder.path("/executor")
+                        .queryParam("session.id", sessionId)
+                        .queryParam("ajax", "fetchexecflowupdate")
+                        .queryParam("execid", execId)
+                        .queryParam("lastUpdateTime", lastUpdateTime)
                         .build())
                 .retrieve()
                 .bodyToMono(JSONObject.class)
@@ -285,6 +339,11 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
                 .retrieve()
                 .bodyToMono(JSONObject.class)
                 .block();
+    }
+
+    @Override
+    public JSONObject fetchJobsOfFlow(String projectName, String flowId) {
+        return null;
     }
 
     private ExchangeFilterFunction logRequest() {
