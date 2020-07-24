@@ -6,6 +6,7 @@
 
 |模块|说明|
 |---|-----|
+|azkaban|Azkaban ajax Api java封装|
 |common|说明详见class文件|
 |elasticsearch|es 搜索API封装|
 |encryption|加密算法集合|
