@@ -528,3 +528,8 @@ INSERT INTO "dae"."company" VALUES (500, '中国', '山西晋城无烟煤矿业�
 -- Primary Key structure for table company
 -- ----------------------------
 ALTER TABLE "dae"."company" ADD CONSTRAINT "company_pkey" PRIMARY KEY ("num");
+
+-- ----------------------------
+-- 各个国家500强个数统计
+-- SELECT country,"count"(country) FROM company GROUP BY country ORDER BY count DESC
+-- ----------------------------
