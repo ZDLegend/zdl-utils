@@ -136,8 +136,7 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
         scheduleTimeInit(bodyBuilder, date);
 
         return client.post()
-                .uri(uriBuilder -> uriBuilder.path("/schedule")
-                        .build())
+                .uri(uriBuilder -> uriBuilder.path("/schedule").build())
                 .bodyValue(bodyBuilder.build())
                 .retrieve()
                 .bodyToMono(String.class)
@@ -171,8 +170,7 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
         bodyBuilder.part("ajax", "scheduleCronFlow");
         bodyBuilder.part("cornExpression", cron);
         JSONObject response = client.post()
-                .uri(uriBuilder -> uriBuilder.path("/schedule")
-                        .build())
+                .uri(uriBuilder -> uriBuilder.path("/schedule").build())
                 .bodyValue(bodyBuilder.build())
                 .retrieve()
                 .bodyToMono(JSONObject.class)
@@ -188,8 +186,7 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
         bodyBuilder.part("action", "removeSched");
         bodyBuilder.part("scheduleId", scheduleId);
         JSONObject response = client.post()
-                .uri(uriBuilder -> uriBuilder.path("/schedule")
-                        .build())
+                .uri(uriBuilder -> uriBuilder.path("/schedule").build())
                 .bodyValue(bodyBuilder.build())
                 .retrieve()
                 .bodyToMono(JSONObject.class)
