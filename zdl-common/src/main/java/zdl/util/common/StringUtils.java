@@ -97,7 +97,7 @@ public final class StringUtils {
     }
 
     /**
-     * 生成人鱼长度的随机字符串
+     * 生成任意长度的随机字符串
      *
      * @param length 字符串长度
      * @return 随机字符串
