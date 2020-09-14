@@ -39,6 +39,8 @@ public interface AzkabanApi {
      * <li>Method: POST
      * <li>Request URL: /?action=login
      * <li>Parameter Location: Request Query String
+     * <li>A sample call via curl:
+     * <p>curl -k -X POST --data "action=login&username=azkaban&password=azkaban" https://localhost:8443
      *
      * @param userName The Azkaban username.
      * @param password The corresponding password.
@@ -52,6 +54,8 @@ public interface AzkabanApi {
      * <li>Method: POST
      * <li>Request URL: /manager?action=create
      * <li>Parameter Location: Request Query
+     * <li>A sample call via curl:
+     * <p>curl -k -X POST --data "session.id=9089beb2-576d-47e3-b040-86dbdc7f523e&name=aaaa&description=11" https://localhost:8443/manager?action=create
      *
      * @param projectName project名称
      * @param description project描述
@@ -65,6 +69,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /manager?delete=true
      * <li>Parameter Location: Request Query
+     * <li>A sample call via curl:
+     * <p>curl -k --get --data "session.id=bca1d75d-6bae-4163-a5b0-378a7d7b5a91&delete=true&project=test-delete-project" https://localhost:8443/manager
      *
      * @param projectName project名称
      * @apiNote before uploading any project zip files, the project should be created first via this API.
@@ -79,6 +85,8 @@ public interface AzkabanApi {
      * <li>Content-Type: multipart/mixed
      * <li>Request URL: /manager?ajax=upload
      * <li>Parameter Location: Request Body
+     * <li>A sample call via curl:
+     * <p>curl -k -i -H "Content-Type: multipart/mixed" -X POST --form 'session.id=e7a29776-5783-49d7-afa0-b0e688096b5e' --form 'ajax=upload' --form 'file=@myproject.zip;type=application/zip' --form 'project=MyProject;type/plain' https://localhost:8443/manager
      *
      * @param projectName The project name to be uploaded.
      * @param file        The project zip file. The type should be set as application/zip or application/x-zip-compressed.
@@ -118,6 +126,8 @@ public interface AzkabanApi {
      * <li>Method: POST
      * <li>Request URL: /schedule?ajax=scheduleCronFlow
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k -d ajax=scheduleCronFlow -d projectName=wtwt -d flow=azkaban-training --data-urlencode cronExpression="0 23/30 5,7-10 ? * 6#3" -b "azkaban.browser.session.id=XXXXXXXXXXXXXX" http://localhost:8081/schedule
      *
      * @param projectName The name of the project.
      * @param cron        A CRON expression is a string comprising 6 or 7 fields separated
@@ -134,6 +144,8 @@ public interface AzkabanApi {
      * <li>Method: POST
      * <li>Request URL: /schedule?action=removeSched
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k https://HOST:PORT/schedule -d "action=removeSched&scheduleId=SCHEDULE_ID" -b azkaban.browser.session.id=SESSION_ID
      *
      * @param scheduleId The id of the schedule. You can find this in the Azkaban UI on the /schedule page.
      */
@@ -154,6 +166,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /executor?ajax=executeFlow
      * <li>Parameter Location: Request Query String
+     * <li>Here is a curl command example:
+     * <p>curl -k --get --data 'session.id=189b956b-f39f-421e-9a95-e3117e7543c9' --data 'ajax=executeFlow' --data 'project=azkaban-test-project' --data 'flow=test' https://localhost:8443/executor
      *
      * @param projectName The project name of the executing flow.
      * @param flow        The flow id to be executed.
@@ -176,6 +190,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /executor?ajax=cancelFlow
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k --data "session.id=34ba08fd-5cfa-4b65-94c4-9117aee48dda&ajax=cancelFlow&execid=302" https://localhost:8443/executor<p>
      * <p>A response sample if succeeds:
      * <pre>
      * {@code
@@ -203,6 +219,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /executor?ajax=pauseFlow
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <P>curl -k --data "session.id=34ba08fd-5cfa-4b65-94c4-9117aee48dda&ajax=pauseFlow&execid=303" https://localhost:8443/executor
      *
      * @param execId The execution id.
      */
@@ -216,6 +234,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /executor?ajax=resumeFlow
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k --data "session.id=34ba08fd-5cfa-4b65-94c4-9117aee48dda&ajax=resumeFlow&execid=303" https://localhost:8443/executor
      *
      * @param execId The execution id.
      */
@@ -227,6 +247,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /manager?ajax=fetchprojectflows
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k --get --data "session.id=6c96e7d8-4df5-470d-88fe-259392c09eea&ajax=fetchprojectflows&project=azkaban-test-project" https://localhost:8443/manager
      *
      * @param projectName The project name to be fetched.
      * @return A response sample
@@ -251,6 +273,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /manager?ajax=fetchflowgraph
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k --get --data "session.id=bca1d75d-6bae-4163-a5b0-378a7d7b5a91&ajax=fetchflowgraph&project=texter-1-1&flow=test" https://localhost:8445/manager
      *
      * @param projectName The project name to be fetched.
      * @param flowId      The project id to be fetched.
@@ -288,6 +312,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /executor?ajax=fetchexecflow
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k --data "session.id=34ba08fd-5cfa-4b65-94c4-9117aee48dda&ajax=fetchexecflow&execid=304" https://localhost:8443/executor
      *
      * @param execId The execution id to be fetched.
      * @return It returns a detailed information about the execution (check the example below).
@@ -367,6 +393,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /manager?ajax=fetchFlowExecutions
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k --get --data "session.id=6c96e7d8-4df5-470d-88fe-259392c09eea&ajax=fetchFlowExecutions&project=azkaban-test-project&flow=test&start=0&length=3" https://localhost:8443/manager
      *
      * @param projectName The project name to be fetched.
      * @param flowId      The flow id to be fetched.
@@ -426,6 +454,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /schedule?ajax=fetchSchedule
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k --get --data "session.id=XXXXXXXXXXXXXX&ajax=fetchSchedule&projectId=1&flowId=test" http://localhost:8081/schedule
      *
      * @param projectId The id of the project.
      * @param flowId    The name of the flow.
@@ -471,6 +501,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /executor?ajax=getRunning
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k --data "session.id=34ba08fd-5cfa-4b65-94c4-9117aee48dda&ajax=getRunning&project=azkaban-test-project&flow=test" https://localhost:8443/executor
      *
      * @param projectName The project name to be fetched.
      * @param flowId      The flow id to be fetched.
@@ -486,6 +518,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /executor?ajax=fetchExecJobLogs
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k --data "session.id=9089beb2-576d-47e3-b040-86dbdc7f523e&ajax=fetchExecJobLogs&execid=297&jobId=test-foobar&offset=0&length=100" https://localhost:8443/executor
      *
      * @param execId The unique id for an execution.
      * @param jobId  The unique id for the job to be fetched.
@@ -505,6 +539,8 @@ public interface AzkabanApi {
      * <li>Method: GET
      * <li>Request URL: /executor?ajax=fetchexecflowupdate
      * <li>Parameter Location: Request Query String
+     * <li>Here's a curl command sample:
+     * <p>curl -k --data "execid=301&lastUpdateTime=-1&session.id=6668c180-efe7-46a-8dd2-e36508b440d8" https://localhost:8443/executor?ajax=fetchexecflowupdate
      *
      * @param execId         The execution id.
      * @param lastUpdateTime The criteria to filter by last update time.
