@@ -26,13 +26,13 @@ public class BeanUtil extends org.springframework.beans.BeanUtils {
     }
 
     public static <T> T convert(Object src, Class<T> clazz) {
-        T target = null;
+        T target;
         try {
             target = clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        assert target != null;
         copyProperties(src, target);
         return target;
     }
