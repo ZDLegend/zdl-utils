@@ -24,7 +24,7 @@ import java.security.spec.X509EncodedKeySpec;
  * @author ZDLegend
  * @since 2020/07/14 17:09
  */
-public class RSA {
+public class RSA implements Encryption {
     private RSAPublicKey publicKey;
     private RSAPrivateCrtKey privateKey;
 
@@ -39,7 +39,7 @@ public class RSA {
 
     public RSA(byte[] publicKey, byte[] privateKey) {
         try {
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            KeyFactory keyFactory = KeyFactory.getInstance(KEY_RSA);
             if (publicKey != null && publicKey.length > 0) {
                 this.publicKey = (RSAPublicKey) keyFactory.generatePublic(new X509EncodedKeySpec(publicKey));
             }
@@ -57,7 +57,7 @@ public class RSA {
 
     public RSA(byte[] publicKey) {
         try {
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            KeyFactory keyFactory = KeyFactory.getInstance(KEY_RSA);
             if (publicKey != null && publicKey.length > 0) {
                 this.publicKey = (RSAPublicKey) keyFactory.generatePublic(new X509EncodedKeySpec(publicKey));
             }
@@ -66,6 +66,7 @@ public class RSA {
         }
     }
 
+    @Override
     public byte[] encrypt(byte[] content) {
         if (publicKey == null) {
             throw new RuntimeException("public key is null.");
@@ -76,7 +77,7 @@ public class RSA {
         }
 
         try {
-            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            Cipher cipher = Cipher.getInstance(RSA_INSTANCE);
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             int size = publicKey.getModulus().bitLength() / 8 - 11;
             ByteArrayOutputStream baos = new ByteArrayOutputStream((content.length + size - 1) / size * (size + 11));
@@ -98,9 +99,10 @@ public class RSA {
         }
     }
 
+    @Override
     public byte[] decrypt(byte[] secret) {
         if (privateKey == null) {
-            throw new RuntimeException("private key is null.");
+            throw new ZDLDigestException("private key is null.");
         }
 
         if (secret == null) {
@@ -108,11 +110,11 @@ public class RSA {
         }
 
         try {
-            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            Cipher cipher = Cipher.getInstance(RSA_PKCS1);
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             int size = privateKey.getModulus().bitLength() / 8;
             ByteArrayOutputStream baos = new ByteArrayOutputStream((secret.length + size - 12) / (size - 11) * size);
-            int left = 0;
+            int left;
             for (int i = 0; i < secret.length; ) {
                 left = secret.length - i;
                 if (left > size) {
@@ -126,28 +128,11 @@ public class RSA {
             }
             return baos.toByteArray();
         } catch (Exception e) {
-            System.err.println("rsa decrypt failed.");
-        }
-        return null;
-    }
-
-    public byte[] sign(byte[] content) {
-        if (privateKey == null) {
-            throw new RuntimeException("private key is null.");
-        }
-        if (content == null) {
-            return null;
-        }
-        try {
-            Signature signature = Signature.getInstance("SHA1WithRSA");
-            signature.initSign(privateKey);
-            signature.update(content);
-            return signature.sign();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ZDLDigestException("RSA加密失败", e);
         }
     }
 
+    @Override
     public boolean verify(byte[] sign, byte[] content) {
         if (publicKey == null) {
             throw new RuntimeException("public key is null.");
@@ -156,14 +141,32 @@ public class RSA {
             return false;
         }
         try {
-            Signature signature = Signature.getInstance("SHA1WithRSA");
+            Signature signature = Signature.getInstance(SHA1WithRSA);
             signature.initVerify(publicKey);
             signature.update(content);
             return signature.verify(sign);
         } catch (Exception e) {
-            System.err.println("rsa verify failed.");
+            throw new ZDLDigestException("RSA检验异常", e);
         }
-        return false;
+    }
+
+    public byte[] sign(byte[] content) {
+        if (privateKey == null) {
+            throw new ZDLDigestException("private key is null.");
+        }
+
+        if (content == null || content.length == 0) {
+            throw new ZDLDigestException("sign加密入参字符串不能为空");
+        }
+
+        try {
+            Signature signature = Signature.getInstance(SHA1WithRSA);
+            signature.initSign(privateKey);
+            signature.update(content);
+            return signature.sign();
+        } catch (Exception e) {
+            throw new ZDLDigestException("SHA1WithRSA sign失败", e);
+        }
     }
 
 }

@@ -22,7 +22,7 @@ import java.security.spec.X509EncodedKeySpec;
  * @author ZDLegend
  * @since 2020/07/14 18:09
  */
-public class ECC {
+public class ECC implements Encryption {
 
     private static final int SIZE = 4096;
     private BCECPublicKey publicKey;
@@ -38,7 +38,7 @@ public class ECC {
 
     public ECC(byte[] publicKey, byte[] privateKey) {
         try {
-            KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
+            KeyFactory keyFactory = KeyFactory.getInstance(ECC_EC, ECC_BC);
             if (publicKey != null && publicKey.length > 0) {
                 this.publicKey = (BCECPublicKey) keyFactory.generatePublic(new X509EncodedKeySpec(publicKey));
             }
@@ -58,7 +58,7 @@ public class ECC {
 
     public ECC(byte[] publicKey) {
         try {
-            KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
+            KeyFactory keyFactory = KeyFactory.getInstance(ECC_EC, ECC_BC);
             if (publicKey != null && publicKey.length > 0) {
                 this.publicKey = (BCECPublicKey) keyFactory.generatePublic(new X509EncodedKeySpec(publicKey));
             }
@@ -67,16 +67,17 @@ public class ECC {
         }
     }
 
+    @Override
     public byte[] encrypt(byte[] content) {
         if (publicKey == null) {
             throw new RuntimeException("public key is null.");
         }
         try {
-            Cipher cipher = Cipher.getInstance("ECIES", "BC");
+            Cipher cipher = Cipher.getInstance(ECC_ECIES, ECC_BC);
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             int size = SIZE;
             ByteArrayOutputStream baos = new ByteArrayOutputStream((content.length + size - 1) / size * (size + 45));
-            int left = 0;
+            int left;
             for (int i = 0; i < content.length; ) {
                 left = content.length - i;
                 if (left > size) {
@@ -90,20 +91,21 @@ public class ECC {
             }
             return baos.toByteArray();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ZDLDigestException("ECC加密失败", e);
         }
     }
 
+    @Override
     public byte[] decrypt(byte[] secret) {
         if (privateKey == null) {
             throw new RuntimeException("private key is null.");
         }
         try {
-            Cipher cipher = Cipher.getInstance("ECIES", "BC");
+            Cipher cipher = Cipher.getInstance(ECC_ECIES, ECC_BC);
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             int size = SIZE + 45;
             ByteArrayOutputStream baos = new ByteArrayOutputStream((secret.length + size + 44) / (size + 45) * size);
-            int left = 0;
+            int left;
             for (int i = 0; i < secret.length; ) {
                 left = secret.length - i;
                 if (left > size) {
@@ -117,9 +119,23 @@ public class ECC {
             }
             return baos.toByteArray();
         } catch (Exception e) {
-            System.err.println("ecc decrypt failed.");
+            throw new ZDLDigestException("ECC解密失败", e);
         }
-        return null;
+    }
+
+    @Override
+    public boolean verify(byte[] sign, byte[] content) {
+        if (publicKey == null) {
+            throw new RuntimeException("public key is null.");
+        }
+        try {
+            Signature signature = Signature.getInstance(SHA1withECDSA, ECC_BC);
+            signature.initVerify(publicKey);
+            signature.update(content);
+            return signature.verify(sign);
+        } catch (Exception e) {
+            throw new ZDLDigestException("ECC验证失败", e);
+        }
     }
 
     public byte[] sign(byte[] content) {
@@ -127,28 +143,13 @@ public class ECC {
             throw new RuntimeException("private key is null.");
         }
         try {
-            Signature signature = Signature.getInstance("SHA1withECDSA", "BC");
+            Signature signature = Signature.getInstance(SHA1withECDSA, ECC_BC);
             signature.initSign(privateKey);
             signature.update(content);
             return signature.sign();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ZDLDigestException("SHA1withECDSA sign 失败", e);
         }
-    }
-
-    public boolean verify(byte[] sign, byte[] content) {
-        if (publicKey == null) {
-            throw new RuntimeException("public key is null.");
-        }
-        try {
-            Signature signature = Signature.getInstance("SHA1withECDSA", "BC");
-            signature.initVerify(publicKey);
-            signature.update(content);
-            return signature.verify(sign);
-        } catch (Exception e) {
-            System.err.println("ecc verify failed.");
-        }
-        return false;
     }
 
 }

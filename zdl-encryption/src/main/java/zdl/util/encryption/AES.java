@@ -19,7 +19,7 @@ import java.security.SecureRandom;
  * @author ZDLegend
  * @since 2020/07/14 17:23
  */
-public class AES {
+public class AES implements Encryption {
 
     private final SecretKeySpec keySpec;
     private final IvParameterSpec iv;
@@ -31,7 +31,7 @@ public class AES {
         if (iv == null) {
             iv = MD5.digest(aesKey);
         }
-        keySpec = new SecretKeySpec(aesKey, "AES");
+        keySpec = new SecretKeySpec(aesKey, AES);
         this.iv = new IvParameterSpec(iv);
     }
 
@@ -39,44 +39,51 @@ public class AES {
         if (aesKey == null || aesKey.length < 16) {
             throw new RuntimeException("错误的初始密钥");
         }
-        keySpec = new SecretKeySpec(aesKey, "AES");
+        keySpec = new SecretKeySpec(aesKey, AES);
         this.iv = new IvParameterSpec(MD5.digest(aesKey));
     }
 
+    @Override
     public byte[] encrypt(byte[] data) {
-        byte[] result = null;
-        Cipher cipher = null;
+        byte[] result;
+        Cipher cipher;
         try {
-            cipher = Cipher.getInstance("AES/CFB/NoPadding");
+            cipher = Cipher.getInstance(AES_INSTANCE);
             cipher.init(Cipher.ENCRYPT_MODE, keySpec, iv);
             result = cipher.doFinal(data);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ZDLDigestException("AES加密失败", e);
         }
         return result;
     }
 
+    @Override
     public byte[] decrypt(byte[] secret) {
-        byte[] result = null;
-        Cipher cipher = null;
+        byte[] result;
+        Cipher cipher;
         try {
-            cipher = Cipher.getInstance("AES/CFB/NoPadding");
+            cipher = Cipher.getInstance(AES_INSTANCE);
             cipher.init(Cipher.DECRYPT_MODE, keySpec, iv);
             result = cipher.doFinal(secret);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ZDLDigestException("AES解密失败", e);
         }
         return result;
     }
 
+    @Override
+    public boolean verify(byte[] sign, byte[] content) {
+        return false;
+    }
+
     public static byte[] randomKey(int size) {
-        byte[] result = null;
+        byte[] result;
         try {
-            KeyGenerator gen = KeyGenerator.getInstance("AES");
+            KeyGenerator gen = KeyGenerator.getInstance(AES);
             gen.init(size, new SecureRandom());
             result = gen.generateKey().getEncoded();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new ZDLDigestException(e);
         }
         return result;
     }

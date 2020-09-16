@@ -17,15 +17,9 @@ import java.util.Arrays;
  * @author ZDLegend
  * @since 2020/07/14 17:23
  */
-public class HMAC {
+public class HMAC implements Encryption {
 
     private Mac mac;
-
-    /**
-     * MAC算法可选以下多种算法
-     * HmacMD5/HmacSHA1/HmacSHA256/HmacSHA384/HmacSHA512
-     */
-    private static final String KEY_MAC = "HmacMD5";
 
     public HMAC(String key) {
         try {
@@ -33,21 +27,27 @@ public class HMAC {
             mac = Mac.getInstance(secretKey.getAlgorithm());
             mac.init(secretKey);
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            throw new ZDLDigestException("HMAC解密失败", e);
         }
     }
 
-    public byte[] digest(byte[] content) {
+    @Override
+    public byte[] encrypt(byte[] content) {
         return mac.doFinal(content);
     }
 
+    @Override
+    public byte[] decrypt(byte[] secret) {
+        throw new ZDLDigestException("HMAC无法解密");
+    }
+
+    @Override
     public boolean verify(byte[] signature, byte[] content) {
         try {
             byte[] result = mac.doFinal(content);
             return Arrays.equals(signature, result);
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            throw new ZDLDigestException("HMAC验证失败", e);
         }
-        return false;
     }
 }

@@ -1,9 +1,11 @@
 package zdl.util.encryption;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
+import static zdl.util.encryption.Encryption.KEY_MD5;
 
 /**
  * 生成MD5编码
@@ -19,30 +21,28 @@ public class MD5 {
     /**
      * 生成MD5摘要值
      */
-    public static String digest(String ps) throws NoSuchAlgorithmException {
-        if (null != ps) {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(ps.getBytes());
-            byte[] results = md.digest();
+    public static String digest(String ps) {
+        if (StringUtils.isNoneBlank(ps)) {
+            byte[] results = digest(ps.getBytes());
             return bytesToHex(results);
         } else {
-            return null;
+            throw new ZDLDigestException("MD5加密入参字符串不能为空");
         }
     }
 
     public static byte[] digest(byte[] content) {
         try {
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            MessageDigest md5 = MessageDigest.getInstance(KEY_MD5);
             return md5.digest(content);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new ZDLDigestException("MD5加密失败", e);
         }
     }
 
     /**
      * 使用commons-codec生成MD5摘要值
      */
-    public static String digestForCodec(String ps) throws Exception {
+    public static String digestForCodec(String ps) {
         return DigestUtils.md5Hex(ps);
     }
 
@@ -52,7 +52,7 @@ public class MD5 {
      * @param ps  验证值
      * @param md5 密文
      */
-    public static boolean verify(String ps, String md5) throws Exception {
+    public static boolean verify(String ps, String md5) {
         String md5str = digest(ps);
         return md5str.equalsIgnoreCase(md5);
     }

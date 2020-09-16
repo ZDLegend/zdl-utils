@@ -5,6 +5,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import static zdl.util.encryption.Encryption.KEY_SHA1;
+
 /**
  * 生成SHA1编码
  * <p>
@@ -16,23 +18,21 @@ import java.security.NoSuchAlgorithmException;
  * @since 2020/07/14 17:09
  */
 public class SHA1 {
-    public static String digest(String ps) throws NoSuchAlgorithmException {
-        MessageDigest sha1 = MessageDigest.getInstance("SHA1");
-        sha1.update(ps.getBytes());
-        byte[] results = sha1.digest();
-        return new String(results);
+
+    public static String digest(String ps) {
+        return new String(digest(ps.getBytes()));
     }
 
     public static byte[] digest(byte[] content) {
         try {
-            MessageDigest sha1 = MessageDigest.getInstance("SHA1");
+            MessageDigest sha1 = MessageDigest.getInstance(KEY_SHA1);
             return sha1.digest(content);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new ZDLDigestException("SHA1加密失败", e);
         }
     }
 
-    public static String digestForCodec(String ps) throws Exception {
+    public static String digestForCodec(String ps) {
         byte[] results = DigestUtils.getSha1Digest().digest(ps.getBytes());
         return new String(results);
     }
