@@ -429,8 +429,7 @@ public final class StringUtils {
         char[] ch = temp.trim().toCharArray();
         float chLength = 0;
         float count = 0;
-        for (int i = 0; i < ch.length; i++) {
-            char c = ch[i];
+        for (char c : ch) {
             if (!Character.isLetterOrDigit(c)) {
                 if (!isChinese(c)) {
                     count = count + 1;
