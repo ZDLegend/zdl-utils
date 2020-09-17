@@ -24,8 +24,8 @@ public class ExceptionHandler {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              PrintStream ps = new PrintStream(baos)) {
             e.printStackTrace(ps);
-            String expetion = baos.toString();
-            return StringUtils.getSubUtil(expetion, "Caused by:(.*).");
+            String exception = baos.toString();
+            return StringUtils.getSubUtil(exception, "Caused by:(.*).");
         } catch (Exception ex) {
             ex.printStackTrace();
             return Collections.emptyList();
