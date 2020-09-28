@@ -2,6 +2,7 @@ package zdl.util.easy.db;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author ZDLegend
@@ -19,4 +20,12 @@ public class DatabaseSource {
     private String dataBaseName;
     private String schemaName;
     private String tableName;
+
+    public String getLongTableName() {
+        if (StringUtils.isNotBlank(schemaName)) {
+            return schemaName + "." + tableName;
+        } else {
+            return tableName;
+        }
+    }
 }

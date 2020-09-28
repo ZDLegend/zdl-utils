@@ -3,6 +3,8 @@ package zdl.util.easy.db;
 import lombok.Getter;
 import lombok.Setter;
 
+import static zdl.util.easy.db.FilterConstant.AND;
+
 /**
  * 过滤条件数据结构
  *
@@ -22,7 +24,7 @@ public class Filter {
     /**
      * 数据库逻辑操作
      */
-    private String operator;
+    private String operator = AND;
 
     /**
      * 值

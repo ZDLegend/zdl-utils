@@ -9,17 +9,20 @@ package zdl.util.easy.db;
  */
 public class FilterConstant {
 
+    public static final String SELECT_FORMAT = "SELECT %s FROM %s WHERE %s";
+
+    public static final String COUNT_FORMAT = "SELECT %s FROM %s WHERE %s GROUP BY %s";
+
+    //sql关键字
     public static final String AND = "AND";
-
     public static final String OR = "OR";
-
     public static final String SELECT = "SELECT";
-
     public static final String FROM = "FROM";
-
+    public static final String WHERE = "WHERE";
+    public static final String ASTERISK = "*";
     public static final String IDENTITY_CONDITION = "1=1";
 
-
+    //数据库逻辑操作
     public static final String EQ = "eq";
     public static final String NE = "ne";
     public static final String LT = "lt";
@@ -32,6 +35,12 @@ public class FilterConstant {
     public static final String IN = "in";
     public static final String IS = "is";
     public static final String BETWEEN = "between";
-
     public static final String IS_NULL = "0";
+
+    //数据库统计类型
+    public static final String COUNT = "count";
+    public static final String SUM = "sum";
+    public static final String AVG = "avg";
+    public static final String MAX = "max";
+    public static final String MIN = "min";
 }

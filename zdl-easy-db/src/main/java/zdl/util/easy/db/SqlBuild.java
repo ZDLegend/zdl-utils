@@ -35,7 +35,7 @@ public class SqlBuild {
         operatorTable.put(BETWEEN, SqlBuild::between);
     }
 
-    private static String sqlBuild(Filters filters) {
+    public static String sqlBuild(Filters filters) {
         String filterSql = null;
         String filtersSql = null;
 
@@ -56,13 +56,13 @@ public class SqlBuild {
         }
 
         if (StringUtils.isNotBlank(filterSql) && StringUtils.isNotBlank(filtersSql)) {
-            return addBrackets(filterSql) + filters.getOperator() + addBrackets(filtersSql);
+            return filterSql + addSpace(filters.getOperator()) + filtersSql;
         } else if (StringUtils.isNotBlank(filterSql)) {
             return filterSql;
         } else if (StringUtils.isNotBlank(filtersSql)) {
             return filtersSql;
         } else {
-            return IDENTITY_CONDITION;
+            return "";
         }
     }
 
@@ -143,11 +143,15 @@ public class SqlBuild {
                 .replace("*", "%");
     }
 
-    private static String addSingleQuotes(String field) {
+    public static String addSingleQuotes(String field) {
         return "'" + field + "'";
     }
 
-    private static String addBrackets(String field) {
+    public static String addBrackets(String field) {
         return "(" + field + ")";
+    }
+
+    public static String addSpace(String field) {
+        return " " + field + " ";
     }
 }
