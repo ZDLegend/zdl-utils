@@ -58,9 +58,9 @@ public class SqlBuild {
         if (StringUtils.isNotBlank(filterSql) && StringUtils.isNotBlank(filtersSql)) {
             return addBrackets(filterSql) + filters.getOperator() + addBrackets(filtersSql);
         } else if (StringUtils.isNotBlank(filterSql)) {
-            return addBrackets(filterSql);
+            return filterSql;
         } else if (StringUtils.isNotBlank(filtersSql)) {
-            return addBrackets(filtersSql);
+            return filtersSql;
         } else {
             return IDENTITY_CONDITION;
         }
