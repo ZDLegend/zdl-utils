@@ -21,6 +21,7 @@
         <module>zdl-javassist</module>
         <module>zdl-encryption</module>
         <module>zdl-azkaban</module>
+        <module>zdl-easy-db</module>
     </modules>
 
     <properties>
