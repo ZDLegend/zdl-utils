@@ -82,40 +82,25 @@ public class SqlBuild {
 
     private static void is(StringBuilder sb, Filter filter) {
         if (IS_NULL.equals(filter.getValue())) {
-            sb.append(filter.getField()).append("IS NULL");
+            sb.append(String.format(IS_NULL_FORMAT, filter.getField()));
         } else {
-            sb.append(filter.getField()).append("IS NOT NULL");
+            sb.append(String.format(IS_NOT_NULL_FORMAT, filter.getField()));
         }
     }
 
     private static void contains(StringBuilder sb, Filter filter) {
         String value = likeReplace(filter);
-        sb.append(" CAST(")
-                .append(filter.getField())
-                .append(" AS VARCHAR)")
-                .append(" like'%")
-                .append(value)
-                .append("%'");
+        sb.append(String.format(LIKE_FORMAT, filter.getField(), "%", value, "%"));
     }
 
     private static void endWith(StringBuilder sb, Filter filter) {
         String value = likeReplace(filter);
-        sb.append(" CAST(")
-                .append(filter.getField())
-                .append(" AS VARCHAR)")
-                .append(" like'%")
-                .append(value)
-                .append("'");
+        sb.append(String.format(LIKE_FORMAT, filter.getField(), "%", value, ""));
     }
 
     private static void startWith(StringBuilder sb, Filter filter) {
         String value = likeReplace(filter);
-        sb.append(" CAST(")
-                .append(filter.getField())
-                .append(" AS VARCHAR)")
-                .append(" like'")
-                .append(value)
-                .append("%'");
+        sb.append(String.format(LIKE_FORMAT, filter.getField(), "", value, "%"));
     }
 
     private static void in(StringBuilder sb, Filter filter) {
@@ -123,16 +108,12 @@ public class SqlBuild {
         String in = Stream.of(strings)
                 .map(SqlBuild::addSingleQuotes)
                 .collect(Collectors.joining(","));
-        sb.append(filter.getField()).append(" in(").append(in).append(")");
+        sb.append(String.format(IN_FORMAT, in));
     }
 
     private static void between(StringBuilder sb, Filter filter) {
         String[] strings = filter.getValue().split(",");
-        sb.append(filter.getField())
-                .append(" between ")
-                .append(addSingleQuotes(strings[0]))
-                .append(" and ")
-                .append(addSingleQuotes(strings[1]));
+        sb.append(String.format(BETWEEN_FORMAT, strings[0], strings[1]));
     }
 
     private static String likeReplace(Filter filter) {
