@@ -20,7 +20,9 @@ public class FilterConstant {
     public static final String FROM = "FROM";
     public static final String WHERE = "WHERE";
     public static final String ASTERISK = "*";
+    public static final String AS = "AS";
     public static final String IDENTITY_CONDITION = "1=1";
+    public static final String SPACE = " ";
 
     //数据库逻辑操作
     public static final String EQ = "eq";
