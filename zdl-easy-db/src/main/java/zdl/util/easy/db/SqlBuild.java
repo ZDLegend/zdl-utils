@@ -77,9 +77,7 @@ public class SqlBuild {
     private static void common(StringBuilder sb, String sqlOperator, Filter filter) {
         sb.append(filter.getField())
                 .append(sqlOperator)
-                .append("'")
-                .append(filter.getValue())
-                .append("'");
+                .append(addSingleQuotes(filter.getValue()));
     }
 
     private static void is(StringBuilder sb, Filter filter) {
