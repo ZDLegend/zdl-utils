@@ -52,7 +52,6 @@ public class Statistics {
                         return sb.toString();
                     })
                     .collect(Collectors.joining(","));
-
         }
 
         String where = SqlBuild.sqlBuild(filters);

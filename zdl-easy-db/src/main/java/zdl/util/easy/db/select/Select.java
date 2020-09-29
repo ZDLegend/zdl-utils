@@ -1,12 +1,16 @@
-package zdl.util.easy.db;
+package zdl.util.easy.db.select;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.CollectionUtils;
+import zdl.util.easy.db.DatabaseSource;
+import zdl.util.easy.db.Filters;
+import zdl.util.easy.db.SqlBuild;
 
 import java.util.List;
 
 import static zdl.util.easy.db.FilterConstant.*;
+import static zdl.util.easy.db.SqlBuild.addSpace;
 
 /**
  * @author ZDLegend
@@ -27,6 +31,10 @@ public class Select {
      */
     private List<String> fields;
 
+    private Sort sort;
+
+    private Page page;
+
     public String sqlBuild(DatabaseSource source) {
         String tableName = source.getLongTableName();
         String columns = ASTERISK;
@@ -37,6 +45,16 @@ public class Select {
         String where = IDENTITY_CONDITION;
         if (filters != null) {
             where = SqlBuild.sqlBuild(filters);
+        }
+
+        if (sort != null) {
+            where = where + addSpace(ORDER_BY) + sort.getField() + addSpace(sort.getDirection());
+        }
+
+        if (page != null) {
+            where = where
+                    + OFFSET + addSpace(String.valueOf(page.getOffset()))
+                    + LIMIT + addSpace(String.valueOf(page.getLimit()));
         }
 
         return String.format(SELECT_FORMAT, columns, tableName, where);

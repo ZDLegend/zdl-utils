@@ -23,6 +23,11 @@ public class FilterConstant {
     public static final String AS = "AS";
     public static final String IDENTITY_CONDITION = "1=1";
     public static final String SPACE = " ";
+    public static final String ASC = "ASC";
+    public static final String DESC = "DESC";
+    public static final String ORDER_BY = "ORDER BY";
+    public static final String OFFSET = "OFFSET";
+    public static final String LIMIT = "LIMIT";
 
     //数据库逻辑操作
     public static final String EQ = "eq";
