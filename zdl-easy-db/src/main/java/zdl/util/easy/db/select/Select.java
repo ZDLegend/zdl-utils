@@ -10,6 +10,7 @@ import zdl.util.easy.db.SqlBuild;
 import java.util.List;
 
 import static zdl.util.easy.db.FilterConstant.*;
+import static zdl.util.easy.db.SqlBuild.addDoubleQuotes;
 import static zdl.util.easy.db.SqlBuild.addSpace;
 
 /**
@@ -48,7 +49,7 @@ public class Select {
         }
 
         if (sort != null) {
-            where = where + addSpace(ORDER_BY) + sort.getField() + addSpace(sort.getDirection());
+            where = where + addSpace(ORDER_BY) + addDoubleQuotes(sort.getField()) + addSpace(sort.getDirection());
         }
 
         if (page != null) {

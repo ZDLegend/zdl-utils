@@ -75,7 +75,7 @@ public class SqlBuild {
     }
 
     private static void common(StringBuilder sb, String sqlOperator, Filter filter) {
-        sb.append(filter.getField())
+        sb.append(addDoubleQuotes(filter.getField()))
                 .append(sqlOperator)
                 .append(addSingleQuotes(filter.getValue()));
     }
@@ -108,12 +108,12 @@ public class SqlBuild {
         String in = Stream.of(strings)
                 .map(SqlBuild::addSingleQuotes)
                 .collect(Collectors.joining(","));
-        sb.append(String.format(IN_FORMAT, in));
+        sb.append(String.format(IN_FORMAT, filter.getField(), in));
     }
 
     private static void between(StringBuilder sb, Filter filter) {
         String[] strings = filter.getValue().split(",");
-        sb.append(String.format(BETWEEN_FORMAT, strings[0], strings[1]));
+        sb.append(String.format(BETWEEN_FORMAT, filter.getField(), strings[0], strings[1]));
     }
 
     private static String likeReplace(Filter filter) {
@@ -124,6 +124,10 @@ public class SqlBuild {
 
     public static String addSingleQuotes(String field) {
         return "'" + field + "'";
+    }
+
+    public static String addDoubleQuotes(String field) {
+        return "\"" + field + "\"";
     }
 
     public static String addBrackets(String field) {

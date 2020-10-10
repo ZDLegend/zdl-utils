@@ -13,10 +13,10 @@ public class FilterConstant {
     public static final String SELECT_FORMAT = "SELECT %s FROM %s WHERE %s";
     public static final String COUNT_FORMAT = "SELECT %s FROM %s WHERE %s GROUP BY %s";
     public static final String LIKE_FORMAT = " CAST(%s AS VARCHAR) LIKE '%s%s%s'";
-    public static final String IN_FORMAT = " IN(%s)'";
-    public static final String BETWEEN_FORMAT = " BETWEEN '%s' AND '%s'";
-    public static final String IS_NULL_FORMAT = "%s IS NULL";
-    public static final String IS_NOT_NULL_FORMAT = "%s IS NOT NULL";
+    public static final String IN_FORMAT = "\"%s\" IN(%s)'";
+    public static final String BETWEEN_FORMAT = "\"%s\" BETWEEN '%s' AND '%s'";
+    public static final String IS_NULL_FORMAT = "\"%s\" IS NULL";
+    public static final String IS_NOT_NULL_FORMAT = "\"%s\" IS NOT NULL";
 
     //sql关键字
     public static final String AND = "AND";
