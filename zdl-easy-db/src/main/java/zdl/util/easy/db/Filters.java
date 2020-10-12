@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import java.util.List;
 
+import static zdl.util.easy.db.FilterConstant.AND;
+
 /**
  * 过滤条件组数据结构
  *
@@ -17,9 +19,9 @@ import java.util.List;
 public class Filters {
 
     /**
-     * 逻辑关系
+     * 逻辑关系，默认AND，枚举参考{@link FilterConstant#LOGIC_OPE}
      */
-    private String operator;
+    private String operator = AND;
 
     /**
      * 筛选条件列表

@@ -14,6 +14,8 @@ import static zdl.util.easy.db.SqlBuild.addDoubleQuotes;
 import static zdl.util.easy.db.SqlBuild.addSpace;
 
 /**
+ * SELECT数据库语句拼接类
+ *
  * @author ZDLegend
  * @version 1.0
  * @date 2020/09/28/ 16:11
@@ -32,8 +34,14 @@ public class Select {
      */
     private List<String> fields;
 
+    /**
+     * 排序条件
+     */
     private Sort sort;
 
+    /**
+     * 分页条件
+     */
     private Page page;
 
     public String sqlBuild(DatabaseSource source) {

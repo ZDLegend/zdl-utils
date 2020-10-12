@@ -12,6 +12,8 @@ import java.util.stream.Stream;
 import static zdl.util.easy.db.FilterConstant.*;
 
 /**
+ * 数据库语句拼接
+ *
  * @author ZDLegend
  * @version 1.0
  * @date 2020/09/28/ 10:25

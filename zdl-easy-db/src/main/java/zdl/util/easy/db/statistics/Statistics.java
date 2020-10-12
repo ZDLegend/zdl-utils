@@ -15,6 +15,8 @@ import static zdl.util.easy.db.FilterConstant.*;
 import static zdl.util.easy.db.SqlBuild.*;
 
 /**
+ * 统计数据库语句拼接类
+ *
  * @author ZDLegend
  * @version 1.0
  * @date 2020/09/28/ 16:38
@@ -23,10 +25,27 @@ import static zdl.util.easy.db.SqlBuild.*;
 @Setter
 public class Statistics {
 
+    /**
+     * 过滤条件
+     */
     private Filters filters;
+
+    /**
+     * 统计条件
+     */
     private List<Count> counts;
+
+    /**
+     * 分组条件
+     */
     private List<String> groupBy;
 
+    /**
+     * 拼接sql语句
+     *
+     * @param source 数据源
+     * @return sql语句
+     */
     public String sqlBuild(DatabaseSource source) {
 
         String head = "";

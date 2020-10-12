@@ -1,5 +1,9 @@
 package zdl.util.easy.db;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * 常用字符串
  *
@@ -33,6 +37,8 @@ public class FilterConstant {
     public static final String ORDER_BY = "ORDER BY";
     public static final String OFFSET = "OFFSET";
     public static final String LIMIT = "LIMIT";
+    public static final Set<String> LOGIC_OPE = Stream.of(AND, OR).collect(Collectors.toSet());
+    public static final Set<String> SORT_OPE = Stream.of(ASC, DESC).collect(Collectors.toSet());
 
     //数据库逻辑操作
     public static final String EQ = "eq";
@@ -48,6 +54,8 @@ public class FilterConstant {
     public static final String IS = "is";
     public static final String BETWEEN = "between";
     public static final String IS_NULL = "0";
+    public static final Set<String> FILTER_OPE = Stream.of(EQ, NE, LT, LTE, GT, GTE, CONTAINS, START_WITH, END_WITH, IN,
+            IS, BETWEEN, IS_NULL).collect(Collectors.toSet());
 
     //数据库统计类型
     public static final String COUNT = "count";
@@ -55,4 +63,5 @@ public class FilterConstant {
     public static final String AVG = "avg";
     public static final String MAX = "max";
     public static final String MIN = "min";
+    public static final Set<String> COUNT_OPE = Stream.of(COUNT, SUM, AVG, MAX, MIN).collect(Collectors.toSet());
 }

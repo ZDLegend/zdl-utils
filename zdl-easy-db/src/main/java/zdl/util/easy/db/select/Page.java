@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ * 分页类
+ *
  * @author ZDLegend
  * @version 1.0
  * @date 2020/09/29/ 10:09

@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * 数据源类
+ *
  * @author ZDLegend
  * @version 1.0
  * @date 2020/09/28/ 13:55
