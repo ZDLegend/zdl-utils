@@ -38,8 +38,8 @@ public class SqlBuild {
     }
 
     public static String sqlBuild(Filters filters) {
-        String filterSql = null;
-        String filtersSql = null;
+        String filterSql;
+        String filtersSql;
 
         if (!CollectionUtils.isEmpty(filters.getFilter())) {
             filterSql = filters.getFilter().stream()
@@ -58,7 +58,7 @@ public class SqlBuild {
                     .map(SqlBuild::addBrackets)
                     .collect(Collectors.joining(filters.getOperator()));
         } else {
-            filterSql = CON_MAP.get(filters.getOperator());
+            filtersSql = CON_MAP.get(filters.getOperator());
         }
 
         return filterSql + addSpace(filters.getOperator()) + filtersSql;
