@@ -74,7 +74,7 @@ public class Statistics {
         }
 
         String where = SqlBuild.sqlBuild(filters);
-        where = StringUtils.isNotBlank(where) ? where : IDENTITY_CONDITION;
+        where = StringUtils.isNotBlank(where) ? where : TRUE_CONDITION;
 
         if (StringUtils.isNotBlank(columns)) {
             return String.format(COUNT_FORMAT, head, source.getLongTableName(), where, columns);

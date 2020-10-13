@@ -1,5 +1,7 @@
 package zdl.util.easy.db;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,7 +32,8 @@ public class FilterConstant {
     public static final String WHERE = "WHERE";
     public static final String ASTERISK = "*";
     public static final String AS = "AS";
-    public static final String IDENTITY_CONDITION = "1=1";
+    public static final String TRUE_CONDITION = "1=1";
+    public static final String FALSE_CONDITION = "1=0";
     public static final String SPACE = " ";
     public static final String ASC = "ASC";
     public static final String DESC = "DESC";
@@ -39,6 +42,10 @@ public class FilterConstant {
     public static final String LIMIT = "LIMIT";
     public static final Set<String> LOGIC_OPE = Stream.of(AND, OR).collect(Collectors.toSet());
     public static final Set<String> SORT_OPE = Stream.of(ASC, DESC).collect(Collectors.toSet());
+    public static final Map<String, String> CON_MAP = new HashMap<>() {{
+        put(AND, TRUE_CONDITION);
+        put(OR, FALSE_CONDITION);
+    }};
 
     //数据库逻辑操作
     public static final String EQ = "eq";

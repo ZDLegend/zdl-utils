@@ -47,6 +47,8 @@ public class SqlBuild {
                     .filter(StringUtils::isNotBlank)
                     .map(SqlBuild::addBrackets)
                     .collect(Collectors.joining(filters.getOperator()));
+        } else {
+            filterSql = CON_MAP.get(filters.getOperator());
         }
 
         if (!CollectionUtils.isEmpty(filters.getFilters())) {
@@ -55,17 +57,11 @@ public class SqlBuild {
                     .filter(StringUtils::isNotBlank)
                     .map(SqlBuild::addBrackets)
                     .collect(Collectors.joining(filters.getOperator()));
+        } else {
+            filterSql = CON_MAP.get(filters.getOperator());
         }
 
-        if (StringUtils.isNotBlank(filterSql) && StringUtils.isNotBlank(filtersSql)) {
-            return filterSql + addSpace(filters.getOperator()) + filtersSql;
-        } else if (StringUtils.isNotBlank(filterSql)) {
-            return filterSql;
-        } else if (StringUtils.isNotBlank(filtersSql)) {
-            return filtersSql;
-        } else {
-            return "";
-        }
+        return filterSql + addSpace(filters.getOperator()) + filtersSql;
     }
 
     private static String sqlBuild(Filter filter) {

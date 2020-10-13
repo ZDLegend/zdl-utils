@@ -51,7 +51,7 @@ public class Select {
             columns = String.join(",", fields);
         }
 
-        String where = IDENTITY_CONDITION;
+        String where = TRUE_CONDITION;
         if (filters != null) {
             where = SqlBuild.sqlBuild(filters);
         }
