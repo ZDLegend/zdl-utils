@@ -61,8 +61,8 @@ public class FilterConstant {
     public static final String IS = "is";
     public static final String BETWEEN = "between";
     public static final String IS_NULL = "0";
-    public static final Set<String> FILTER_OPE = Stream.of(EQ, NE, LT, LTE, GT, GTE, CONTAINS, START_WITH, END_WITH, IN,
-            IS, BETWEEN, IS_NULL).collect(Collectors.toSet());
+    public static final Set<String> FILTER_OPE = Stream.of(EQ, NE, LT, LTE, GT, GTE, CONTAINS, START_WITH,
+            END_WITH, IN, IS, BETWEEN, IS_NULL).collect(Collectors.toSet());
 
     //数据库统计类型
     public static final String COUNT = "count";
