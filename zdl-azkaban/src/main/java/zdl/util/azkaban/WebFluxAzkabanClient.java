@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * @author ZDLegend
  * @create 2020/07/17
  */
-public class SpringHttpAzkabanClient implements AzkabanApi {
+public class WebFluxAzkabanClient implements AzkabanApi {
 
     private WebClient client;
 
