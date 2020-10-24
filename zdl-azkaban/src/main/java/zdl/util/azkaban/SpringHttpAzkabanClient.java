@@ -3,6 +3,7 @@ package zdl.util.azkaban;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -14,10 +15,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -197,13 +195,31 @@ public class SpringHttpAzkabanClient implements AzkabanApi {
     @Override
     public void downLoadZip(String projectName, String zipPath) {
         File file = new File(zipPath);
-        try (OutputStream output = new FileOutputStream(file);) {
-            URL url = new URL(this.url + "/manager?session.id=" + sessionId + "&download=true&project="
-                    + projectName);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setConnectTimeout(3 * 1000);
-            InputStream inputStream = conn.getInputStream();
-            inputStream.transferTo(output);
+
+//        try (OutputStream output = new FileOutputStream(file);) {
+//            URL url = new URL(this.url + "/manager?session.id=" + sessionId + "&download=true&project="
+//                    + projectName);
+//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//            conn.setConnectTimeout(3 * 1000);
+//            InputStream inputStream = conn.getInputStream();
+//            inputStream.transferTo(output);
+//        } catch (Exception e) {
+//            System.err.println(e.getMessage());
+//        }
+
+        try (OutputStream output = new FileOutputStream(file)) {
+            Objects.requireNonNull(client.get()
+                    .uri(uriBuilder -> uriBuilder.path("manager")
+                            .queryParam("session.id", sessionId)
+                            .queryParam("download", true)
+                            .queryParam("project", projectName)
+                            .build())
+                    .accept(MediaType.APPLICATION_OCTET_STREAM)
+                    .retrieve()
+                    .bodyToMono(Resource.class)
+                    .block())
+                    .getInputStream()
+                    .transferTo(output);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
