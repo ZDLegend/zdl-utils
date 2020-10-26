@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * 使用Spring Web Client 调用 Azkaban rest api
+ * 使用Spring web flux client 调用 Azkaban rest api
  *
  * @author ZDLegend
  * @create 2020/07/17
@@ -234,7 +234,11 @@ public class WebFluxAzkabanClient implements AzkabanApi {
                         .queryParam("project", projectName)
                         .queryParam("flow", flow)
                         //If a failure occurs, how should the execution behaves.
+                        //Possible Values: finishCurrent, cancelImmediately, finishPossible
                         .queryParam("failureAction", "cancleTimmediately")
+                        //Concurrent choices. Use ignore if nothing specifical is required.
+                        //Possible Values: ignore, pipeline, skip
+                        .queryParam("concurrentOption  ", "skip")
                         .build())
                 .retrieve()
                 .bodyToMono(JSONObject.class);
