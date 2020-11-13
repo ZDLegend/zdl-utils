@@ -152,7 +152,7 @@ public class FlinkDemo {
                 //指定窗口，每10秒个计算一次
                 .timeWindow(Time.of(10, TimeUnit.SECONDS))
                 //指定一个开始的值，对每一组内的元素进行归并操作，即第一个和第二个归并，结果再与第三个归并...
-                .aggregate(new MyCountAggregate());
+                .aggregate(new MyAppendAggregate());
 
         //4.打印输出sink
         result.print();
@@ -271,7 +271,7 @@ public class FlinkDemo {
     }
 
 
-    public static class MyCountAggregate implements AggregateFunction<Tuple2<String, Integer>, String, String> {
+    public static class MyAppendAggregate implements AggregateFunction<Tuple2<String, Integer>, String, String> {
 
         @Override
         public String createAccumulator() {
