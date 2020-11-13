@@ -1,4 +1,4 @@
-package zdl.util.flink;
+package zdl.util.flink.demo;
 
 import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.functions.CoGroupFunction;
