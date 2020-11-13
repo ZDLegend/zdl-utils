@@ -1,5 +1,6 @@
 package zdl.util.flink;
 
+import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.typeinfo.Types;
@@ -94,7 +95,7 @@ public class FlinkDemo {
                 //如果要用Lambda表示是，Tuple2是泛型，那就得用returns指定类型。
                 .returns(Types.TUPLE(Types.STRING, Types.INT))
                 //keyBy进行分区，按照第一列，也就是按照单词进行分区
-                .keyBy(0)
+                .keyBy(value -> value.f0)
                 //指定窗口，每10秒个计算一次
                 .timeWindow(Time.of(10, TimeUnit.SECONDS))
                 //计算个数，计算第1列
@@ -120,11 +121,11 @@ public class FlinkDemo {
                 //如果要用Lambda表示是，Tuple2是泛型，那就得用returns指定类型。
                 .returns(Types.TUPLE(Types.STRING, Types.INT))
                 //keyBy进行分区，按照第一列，也就是按照单词进行分区
-                .keyBy(value -> value)
+                .keyBy(value -> value.f0)
                 //指定窗口，每10秒个计算一次
                 .timeWindow(Time.of(10, TimeUnit.SECONDS))
                 //对每一组内的元素进行归并操作，即第一个和第二个归并，结果再与第三个归并...
-                .reduce((Tuple2<String, Integer> t1, Tuple2<String, Integer> t2) -> new Tuple2(t1.f0, t1.f1 + t2.f1));
+                .reduce((Tuple2<String, Integer> t1, Tuple2<String, Integer> t2) -> new Tuple2<>(t1.f0, t1.f1 + t2.f1));
 
         //4.打印输出sink
         result.print();
@@ -151,7 +152,7 @@ public class FlinkDemo {
                 //指定窗口，每10秒个计算一次
                 .timeWindow(Time.of(10, TimeUnit.SECONDS))
                 //指定一个开始的值，对每一组内的元素进行归并操作，即第一个和第二个归并，结果再与第三个归并...
-                .fold("结果：", (String current, Tuple2<String, Integer> t2) -> current + t2.f0 + ",");
+                .aggregate(new MyCountAggregate());
 
         //4.打印输出sink
         result.print();
@@ -268,4 +269,56 @@ public class FlinkDemo {
         //5.开始执行
         env.execute();
     }
+
+
+    public static class MyCountAggregate implements AggregateFunction<Tuple2<String, Integer>, String, String> {
+
+        @Override
+        public String createAccumulator() {
+            return "结果：";
+        }
+
+        /**
+         * Adds the given input value to the given accumulator, returning the
+         * new accumulator value.
+         *
+         * <p>For efficiency, the input accumulator may be modified and returned.
+         *
+         * @param value       The value to add
+         * @param accumulator The accumulator to add the value to
+         * @return The accumulator with the updated state
+         */
+        @Override
+        public String add(Tuple2<String, Integer> value, String accumulator) {
+            return accumulator + " " + value.f0;
+        }
+
+        /**
+         * Gets the result of the aggregation from the accumulator.
+         *
+         * @param accumulator The accumulator of the aggregation
+         * @return The final aggregation result.
+         */
+        @Override
+        public String getResult(String accumulator) {
+            return accumulator;
+        }
+
+        /**
+         * Merges two accumulators, returning an accumulator with the merged state.
+         *
+         * <p>This function may reuse any of the given accumulators as the target for the merge
+         * and return that. The assumption is that the given accumulators will not be used any
+         * more after having been passed to this function.
+         *
+         * @param a An accumulator to merge
+         * @param b Another accumulator to merge
+         * @return The accumulator with the merged state
+         */
+        @Override
+        public String merge(String a, String b) {
+            return a + " " + b;
+        }
+    }
+
 }
