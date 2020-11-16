@@ -229,20 +229,10 @@ public class FlinkDemo {
         DataStream<String> textStream9001 = env.socketTextStream("localhost", 9001, "\n");
         //将输入处理一下，变为tuple2
         DataStream<Tuple2<String, String>> mapStream9000 = textStream9000
-                .map(new MapFunction<String, Tuple2<String, String>>() {
-                    @Override
-                    public Tuple2<String, String> map(String s) throws Exception {
-                        return Tuple2.of(s, "来自9000端口：" + s);
-                    }
-                });
+                .map((MapFunction<String, Tuple2<String, String>>) s -> Tuple2.of(s, "来自9000端口：" + s));
 
         DataStream<Tuple2<String, String>> mapStream9001 = textStream9001
-                .map(new MapFunction<String, Tuple2<String, String>>() {
-                    @Override
-                    public Tuple2<String, String> map(String s) throws Exception {
-                        return Tuple2.of(s, "来自9001端口：" + s);
-                    }
-                });
+                .map((MapFunction<String, Tuple2<String, String>>) s -> Tuple2.of(s, "来自9001端口：" + s));
 
         //3.两个流进行coGroup操作,没有关联上的也保留下来，功能更强大
         DataStream<String> result = mapStream9000.coGroup(mapStream9001)
