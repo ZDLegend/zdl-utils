@@ -5,12 +5,18 @@ import org.apache.flink.api.common.functions.CoGroupFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.api.java.tuple.Tuple3;
+import org.apache.flink.api.java.tuple.Tuple4;
+import org.apache.flink.streaming.api.collector.selector.OutputSelector;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SplitStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.Collector;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -258,6 +264,43 @@ public class FlinkDemo {
         result.print();
         //5.开始执行
         env.execute();
+    }
+
+    public static void splitDemo(String[] args) throws Exception {
+        final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setParallelism(1);
+
+        DataStream<String> textStream = env.socketTextStream("localhost", 9000, "\n");
+        //flink.1.11.1显示SplitStream类过时，推荐用keyBy的方式进行窗口处理或SideOutput侧输出流处理；注意，使用split切分后的流，不可二次切分，否则会抛异常
+        SplitStream<Tuple3<String, String, Integer>> split = textStream
+                //map是将每一行单词变为一个tuple2
+                .map(line -> Tuple3.of(line.trim(), "111", 1))
+                .split((OutputSelector<Tuple3<String, String, Integer>>) value -> {
+                    List<String> output = new ArrayList<String>();
+                    if (value.f1.equals("man")) {
+                        output.add("man");
+                    } else {
+                        output.add("girl");
+                    }
+                    return output;
+                });
+
+        //Datastream
+        //DataStream<Tuple3<String, String, Integer>> dataStream = env.fromCollection(tuple3List);
+
+
+        //查询指定名称的数据流
+        DataStream<Tuple4<String, String, Integer, String>> dataStream1 = split.select("man")
+                .map((MapFunction<Tuple3<String, String, Integer>, Tuple4<String, String, Integer, String>>) t3 -> Tuple4.of(t3.f0, t3.f1, t3.f2, "男"));
+
+        DataStream<Tuple4<String, String, Integer, String>> dataStream2 = split.select("girl")
+                .map((MapFunction<Tuple3<String, String, Integer>, Tuple4<String, String, Integer, String>>) t3 -> Tuple4.of(t3.f0, t3.f1, t3.f2, "女"));
+        //打印:男
+        dataStream1.print();
+        //打印：女
+        dataStream2.print();
+
+        env.execute("flink Split job");
     }
 
 
