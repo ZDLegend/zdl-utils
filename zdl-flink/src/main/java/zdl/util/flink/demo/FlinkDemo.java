@@ -276,7 +276,7 @@ public class FlinkDemo {
                 //map是将每一行单词变为一个tuple2
                 .map(line -> Tuple3.of(line.trim(), "111", 1))
                 .split((OutputSelector<Tuple3<String, String, Integer>>) value -> {
-                    List<String> output = new ArrayList<String>();
+                    List<String> output = new ArrayList<>();
                     if (value.f1.equals("man")) {
                         output.add("man");
                     } else {
