@@ -70,6 +70,7 @@ public class StreamKafkaJoinPostgres {
         FlinkKafkaConsumer011<String> webStream = new FlinkKafkaConsumer011<>(topic, new SimpleStringSchema(), properties);
         webStream.setStartFromEarliest();
         DataStream<String> kafkaData = env.addSource(webStream).setParallelism(1);
+
         DataStream<Tuple5<String, String, String, String, String>> map
                 = kafkaData.map(value -> {
             String[] tokens = value.split("\\t");
@@ -84,9 +85,11 @@ public class StreamKafkaJoinPostgres {
     }
 
     public static class MyBroadcastProcessFunction
-            extends BroadcastProcessFunction<Tuple5<String, String, String, String, String>, HashMap<String, String>, Tuple5<String, String, String, String, String>> {
+            extends BroadcastProcessFunction<Tuple5<String, String, String, String, String>, HashMap<String, String>,
+            Tuple5<String, String, String, String, String>> {
         private final HashMap<String, String> keyWords = new HashMap<>();
-        MapStateDescriptor<String, Map<String, String>> ruleStateDescriptor = new MapStateDescriptor<>("RulesBroadcastState"
+        MapStateDescriptor<String, Map<String, String>> ruleStateDescriptor
+                = new MapStateDescriptor<>("RulesBroadcastState"
                 , BasicTypeInfo.STRING_TYPE_INFO
                 , new MapTypeInfo<>(String.class, String.class));
 
@@ -96,7 +99,8 @@ public class StreamKafkaJoinPostgres {
         }
 
         @Override
-        public void processElement(Tuple5<String, String, String, String, String> value, ReadOnlyContext ctx, Collector<Tuple5<String, String, String, String, String>> out) throws Exception {
+        public void processElement(Tuple5<String, String, String, String, String> value, ReadOnlyContext ctx,
+                                   Collector<Tuple5<String, String, String, String, String>> out) throws Exception {
 //                        Thread.sleep(10000);
             if (keyWords.isEmpty()) {
                 Thread.sleep(10000);
@@ -116,7 +120,8 @@ public class StreamKafkaJoinPostgres {
          * 接收广播中的数据
          */
         @Override
-        public void processBroadcastElement(HashMap<String, String> value, Context ctx, Collector<Tuple5<String, String, String, String, String>> out) {
+        public void processBroadcastElement(HashMap<String, String> value, Context ctx,
+                                            Collector<Tuple5<String, String, String, String, String>> out) {
 //                        System.out.println("收到广播数据："+value.values());
 //                        BroadcastState <String, Map <String, String>> broadcastState = ctx.getBroadcastState(ruleStateDescriptor);
             keyWords.putAll(value);

@@ -35,13 +35,9 @@ object SideOutputDemo {
 
     val inputDStream: DataStream[String] = env.socketTextStream("hadoop102", 7777)
 
-    val dataDstream: DataStream[JSONObject] = inputDStream.map(
-      data => {
-        return parseObject(data);
-      })
+    val dataDstream: DataStream[JSONObject] = inputDStream.map(data => parseObject(data))
 
-    val resultDStrem: DataStream[JSONObject] = dataDstream
-      .process(SideOutput(30.0))
+    val resultDStrem: DataStream[JSONObject] = dataDstream.process(SideOutput(30.0))
 
     dataDstream.print("data")
     // 主流为高于30.0度
