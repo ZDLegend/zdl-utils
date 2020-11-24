@@ -26,9 +26,9 @@ public class DBUtils {
     private static String lastSQL = "";
 
     public DBUtils(DatabaseSource config) {
-        this.source = new Database(config);
+        source = new Database(config);
         try {
-            this.conn = this.source.getConnection();
+            conn = source.getConnection();
         } catch (Exception e) {
             System.out.println("连接数据库报错：" + e.getMessage());
         }
@@ -68,10 +68,10 @@ public class DBUtils {
     public int update(String sql, int retry, Object... params) {
         int index = 0, affectRows = -1;
         try {
-            if (!sql.equals(this.lastSQL)) {
-                DbUtils.closeQuietly(this.ps);
-                this.ps = this.conn.prepareStatement(sql);
-                this.lastSQL = sql;
+            if (!sql.equals(lastSQL)) {
+                DbUtils.closeQuietly(ps);
+                ps = conn.prepareStatement(sql);
+                lastSQL = sql;
             }
             for (Object param : params) {
                 ps.setObject(++index, param);
@@ -80,9 +80,9 @@ public class DBUtils {
         } catch (Exception e) {
             if (retry > 0) {
                 try {
-                    this.conn = this.source.getConnection();  //重连数据库
+                    conn = source.getConnection();  //重连数据库
                     DbUtils.closeQuietly(ps);
-                    this.ps = this.conn.prepareStatement(sql);
+                    ps = conn.prepareStatement(sql);
                 } catch (Exception re) {
                     System.out.println("重连接数据库报错：" + re.getMessage());
                 }
