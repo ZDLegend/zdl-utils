@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 @Setter
 public class DatabaseSource {
-    private String ip;
+    private String host;
     private String port;
     private String url;
     private String userName;
@@ -22,6 +22,8 @@ public class DatabaseSource {
     private String dataBaseName;
     private String schemaName;
     private String tableName;
+    private String dbType;  //数据库类型
+    private int maxConnection = 10;
 
     public String getLongTableName() {
         if (StringUtils.isNotBlank(schemaName)) {
