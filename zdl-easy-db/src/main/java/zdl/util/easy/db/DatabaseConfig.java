@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Getter
 @Setter
-public class DatabaseSource {
+public class DatabaseConfig {
     private String host;
     private String port;
     private String url;
@@ -24,6 +24,7 @@ public class DatabaseSource {
     private String tableName;
     private String dbType;  //数据库类型
     private int maxConnection = 10;
+    private long timeOutMs = 60000;
 
     public String getLongTableName() {
         if (StringUtils.isNotBlank(schemaName)) {

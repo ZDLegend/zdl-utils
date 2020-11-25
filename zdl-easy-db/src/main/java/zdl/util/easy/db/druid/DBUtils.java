@@ -1,7 +1,7 @@
 package zdl.util.easy.db.druid;
 
 import org.apache.commons.dbutils.DbUtils;
-import zdl.util.easy.db.DatabaseSource;
+import zdl.util.easy.db.DatabaseConfig;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 /**
  * description
  *
- * @author [zhang.zhiming@unisinsight.com]
+ * @author ZDLegend
  * @date 2019/10/22 15:48
  * @since 1.0
  */
@@ -18,15 +18,15 @@ public class DBUtils {
     private static final long serialVersionUID = 1L;
 
     private static DBUtils instance;
-    private static Database source;
+    private static DruidDatabase source;
 
     private static Connection conn = null;
     private static PreparedStatement ps = null;
     private static ResultSet rs = null;
     private static String lastSQL = "";
 
-    public DBUtils(DatabaseSource config) {
-        source = new Database(config);
+    public DBUtils(DatabaseConfig config) {
+        source = new DruidDatabase(config);
         try {
             conn = source.getConnection();
         } catch (Exception e) {
@@ -40,7 +40,7 @@ public class DBUtils {
      * @param config
      * @return
      */
-    public static DBUtils getInstance(DatabaseSource config) {
+    public static DBUtils getInstance(DatabaseConfig config) {
         if (instance == null) {
             synchronized (DBUtils.class) {
                 if (instance == null) {

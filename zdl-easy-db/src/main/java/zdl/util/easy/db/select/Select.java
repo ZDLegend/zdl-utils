@@ -3,7 +3,7 @@ package zdl.util.easy.db.select;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.util.CollectionUtils;
-import zdl.util.easy.db.DatabaseSource;
+import zdl.util.easy.db.DatabaseConfig;
 import zdl.util.easy.db.Filters;
 import zdl.util.easy.db.SqlBuild;
 
@@ -44,7 +44,7 @@ public class Select {
      */
     private Page page;
 
-    public String sqlBuild(DatabaseSource source) {
+    public String sqlBuild(DatabaseConfig source) {
         String tableName = source.getLongTableName();
         String columns = ASTERISK;
         if (!CollectionUtils.isEmpty(fields)) {

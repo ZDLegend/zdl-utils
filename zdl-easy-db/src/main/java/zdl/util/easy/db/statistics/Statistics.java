@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
-import zdl.util.easy.db.DatabaseSource;
+import zdl.util.easy.db.DatabaseConfig;
 import zdl.util.easy.db.Filters;
 import zdl.util.easy.db.SqlBuild;
 
@@ -46,7 +46,7 @@ public class Statistics {
      * @param source 数据源
      * @return sql语句
      */
-    public String sqlBuild(DatabaseSource source) {
+    public String sqlBuild(DatabaseConfig source) {
 
         String head = "";
 
