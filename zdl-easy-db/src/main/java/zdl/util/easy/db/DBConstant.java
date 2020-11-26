@@ -31,8 +31,8 @@ public class DBConstant {
         POOL_TABLE.put(DRUID, DruidDatabase.class);
     }
 
-    public static DatabaseInterface initDBI(String type, DatabaseConfig databaseConfig) {
-        Class<? extends DatabaseInterface> clazz = POOL_TABLE.get(type);
+    public static DatabaseInterface initDBI(DatabaseConfig databaseConfig) {
+        Class<? extends DatabaseInterface> clazz = POOL_TABLE.get(databaseConfig.getUsedPool());
         try {
             return clazz.getDeclaredConstructor(DatabaseConfig.class).newInstance(databaseConfig);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

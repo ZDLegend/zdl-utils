@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
+import static zdl.util.easy.db.DBConstant.DB_TABLE;
+import static zdl.util.easy.db.DBConstant.HIKARI;
+
 /**
  * 数据源类
  *
@@ -25,6 +28,19 @@ public class DatabaseConfig {
     private String dbType;  //数据库类型
     private int maxConnection = 10;
     private long timeOutMs = 60000;
+    private String usedPool = HIKARI;
+
+    public String getDBUrl() {
+        return String.format(DB_TABLE.get(dbType)[1],
+                dbType,
+                getHost(),
+                getPort(),
+                getDataBaseName());
+    }
+
+    public String getSingleton() {
+        return getDBUrl() + ":" + userName;
+    }
 
     public String getLongTableName() {
         if (StringUtils.isNotBlank(schemaName)) {

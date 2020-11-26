@@ -27,12 +27,7 @@ public class HikariDatabase extends HikariDataSource implements Serializable, Da
             throw new IllegalArgumentException(message);
         }
 
-        String url = String.format(DB_TABLE.get(dbType)[1],
-                dbType,
-                databaseConfig.getHost(),
-                databaseConfig.getPort(),
-                databaseConfig.getDataBaseName());
-
+        String url = databaseConfig.getDBUrl();
         setJdbcUrl(url);
         setDriverClassName(DB_TABLE.get(dbType)[0]);
         setUsername(databaseConfig.getUserName());

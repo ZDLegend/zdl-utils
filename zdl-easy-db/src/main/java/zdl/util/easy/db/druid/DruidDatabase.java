@@ -32,11 +32,7 @@ public class DruidDatabase extends DruidDataSource implements Serializable, Data
             throw new IllegalArgumentException(message);
         }
 
-        String url = String.format(DB_TABLE.get(dbType)[1],
-                dbType,
-                databaseConfig.getHost(),
-                databaseConfig.getPort(),
-                databaseConfig.getDataBaseName());
+        String url = databaseConfig.getDBUrl();
         setUrl(url);
         setDriverClassName(DB_TABLE.get(dbType)[0]);
         setUsername(databaseConfig.getUserName());
