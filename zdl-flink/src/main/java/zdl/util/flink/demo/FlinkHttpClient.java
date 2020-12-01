@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FlinkHttpClient {
     private static final Logger log = LoggerFactory.getLogger(FlinkHttpClient.class);
@@ -26,118 +27,75 @@ public class FlinkHttpClient {
 
     private String url;
 
-    public void init() {
+    public FlinkHttpClient init(String url) {
+        this.url = url;
         client = WebClient.builder()
                 .baseUrl(url)
                 .filter(logRequest())
                 .filter(logResponse())
                 .build();
+        return this;
     }
 
     /**
      * 获取已上传flink文件列表
      *
-     * @param url
+     * @return Returns a list of all jars previously uploaded via '/jars/upload'.
+     */
+    public JSONArray getJarsNameStr() {
+        JSONObject json = client.get()
+                .uri(uriBuilder -> uriBuilder.path("jars").build())
+                .retrieve()
+                .bodyToMono(JSONObject.class)
+                .block();
+        if (json != null && json.containsKey("files")) {
+            return JSONArray.parseArray(json.get("files").toString());
+        } else {
+            return new JSONArray();
+        }
+    }
+
+    /**
+     * 获取已上传flink文件列表
+     *
      * @return <jar_id, 文件名>
      */
-    public JSONObject getJarsName(String url) {
+    public JSONObject getJarsName() {
         JSONObject jarsList = new JSONObject();
-        String result = getJarsNameStr(url);
-        JSONObject value = JSONObject.parseObject(result);
-        if (value.containsKey("files")) {
-            JSONArray array = JSONArray.parseArray(value.get("files").toString());
-            if (array != null) {
-                //循环参数数组
-                for (Object o : array) {
-                    value = JSONObject.parseObject(o.toString());
-                    if (value.containsKey("name") && value.containsKey("id")) {
-                        jarsList.put(value.get("id").toString(), value.get("name").toString());
+        getJarsNameStr()
+                .stream()
+                .map(o -> (JSONObject) o)
+                .forEach(j -> {
+                    if (j.containsKey("name") && j.containsKey("id")) {
+                        jarsList.put(j.get("id").toString(), j.get("name").toString());
                     }
-                }
-            }
-        }
-
+                });
         return jarsList;
     }
 
     /**
-     * 获取上传jar包的详细信息
+     * 获取jar包的EntryClass
      *
-     * @param url
-     * @return
-     */
-    public JSONArray getJarsInfo(String url) {
-        String result = getJarsNameStr(url);
-        JSONArray arrayList = new JSONArray();
-        if (result != null) {
-            JSONObject value = JSONObject.parseObject(result);
-            if (value.containsKey("files")) {
-                return JSONArray.parseArray(value.get("files").toString());
-            }
-        }
-        return arrayList;
-    }
-
-    /**
-     * 获取已上传flink文件列表
-     *
-     * @param url
-     * @return <jar_id, 文件名>
-     */
-    public String getJarsNameStr(String url) {
-        return client.get()
-                .uri(uriBuilder -> uriBuilder.path("jars").build())
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-
-    }
-
-    /**
-     * 获取jar包的entyClass
-     *
-     * @param jarID
      * @return entryClass
      */
     public String getEntryClass(String jarID) {
-        String result = client.get()
-                .uri(uriBuilder -> uriBuilder.path("jars").build())
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-
-        String entyClass = null;
-
-        try {
-            JSONObject value = JSONObject.parseObject(result);
-            if (value.containsKey("files")) {
-                JSONArray array = JSONArray.parseArray(value.get("files").toString());
-                if (array != null) {
-                    //循环参数数组
-                    for (Object o : array) {
-                        value = JSONObject.parseObject(o.toString());
-                        if (value.containsKey("id") && value.containsKey("entry") && value.get("id").toString().equals(jarID)) {
-                            JSONArray arrayEntry = JSONObject.parseArray(value.get("entry").toString());
-                            if (arrayEntry != null && arrayEntry.size() > 0) {
-                                JSONObject childEntry = JSONObject.parseObject(arrayEntry.get(0).toString());
-                                entyClass = childEntry.getString("name");
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("获取flink的entry class失败：" + e.getMessage());
-        }
-        return entyClass;
+        return getJarsNameStr()
+                .stream()
+                .map(o -> (JSONObject) o)
+                .filter(value -> value.containsKey("id") && value.containsKey("entry") && value.get("id").toString().equals(jarID))
+                .map(j -> j.getJSONArray("entry"))
+                .filter(arrayEntry -> arrayEntry != null && arrayEntry.size() > 0)
+                .findAny()
+                .orElse(new JSONArray())
+                .getJSONObject(0)
+                .getString("name");
     }
 
     /**
      * 上传jar包
      *
-     * @param jarPath
-     * @param jarName
+     * @param jarPath 文件路径
+     * @param jarName 文件名
      * @return flink的jar包ID
      */
     public String flinkJarUpload(String jarPath, String jarName) {
@@ -164,11 +122,12 @@ public class FlinkHttpClient {
                         jar_id = jar_id.substring(jar_id.lastIndexOf("/") + 1);
                     }
                 } else {
-                    throw new Exception("上传jar包失败！");
+                    throw new RuntimeException("上传jar包失败！");
                 }
             }
         } catch (Exception e) {
             log.error("上传jar包失败：" + e.getMessage());
+            throw new RuntimeException("上传jar包失败：" + e.getMessage());
         }
         return jar_id;
     }
@@ -176,13 +135,10 @@ public class FlinkHttpClient {
     /**
      * 返回所有job的信息
      *
-     * @param url
-     * @return
+     * @return Returns an overview over all jobs.
      */
-    public Map<String, Map<String, Object>> getAllJobs(String url) {
+    public Map<String, JSONObject> getAllJobs() {
         log.info("request url: " + url + "jobs/overview");
-        Map<String, Map<String, Object>> jobInfo = new HashMap<>();
-
         try {
             JSONObject value = client.get()
                     .uri(uriBuilder -> uriBuilder.path("jobs/overview").build())
@@ -191,85 +147,58 @@ public class FlinkHttpClient {
                     .block();
             assert value != null;
             if (value.containsKey("jobs")) {
-                JSONArray array = JSONArray.parseArray(value.get("jobs").toString());
+                JSONArray array = value.getJSONArray("jobs");
                 if (array != null) {
-                    //循环参数数组
-                    for (Object o : array) {
-                        value = JSONObject.parseObject(o.toString());
-                        if (value.containsKey("jid")) {
-                            jobInfo.put(value.get("jid").toString(), value);
-                        }
-                    }
+                    return array.stream()
+                            .map(o -> (JSONObject) o)
+                            .filter(j -> j.containsKey("jid"))
+                            .collect(Collectors.toMap(j -> j.getString("jid"), j -> j));
                 }
             }
         } catch (Exception e) {
             log.error("返回所有job信息报错：" + e.getMessage());
         }
-        return jobInfo;
+
+        return new HashMap<>();
     }
 
     /**
      * 获取所有运行job
      *
-     * @param url
-     * @return
+     * @return Returns an overview over running jobs.
      */
-    public Map<String, Map<String, Object>> getRunningJobs(String url) {
+    public Map<String, Map<String, Object>> getRunningJobs() {
         log.info("request url: " + url + "jobs/overview");
-        Map<String, Map<String, Object>> jobInfo = new HashMap<>();
-        String result;
-
-        try {
-            JSONObject value = client.get()
-                    .uri(uriBuilder -> uriBuilder.path("jobs/overview").build())
-                    .retrieve()
-                    .bodyToMono(JSONObject.class)
-                    .block();
-            assert value != null;
-            if (value.containsKey("jobs")) {
-                JSONArray array = JSONArray.parseArray(value.get("jobs").toString());
-                if (array != null) {
-                    //循环参数数组
-                    for (Object o : array) {
-                        value = JSONObject.parseObject(o.toString());
-                        if (value.containsKey("jid") && value.containsKey("state") && value.get("state").equals("RUNNING")) {
-                            jobInfo.put(value.get("jid").toString(), value);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("获取运行job信息报错：" + e.getMessage());
-        }
-        return jobInfo;
+        Map<String, JSONObject> value = getAllJobs();
+        return value.values().stream()
+                .filter(m -> m.get("state").equals("RUNNING"))
+                .collect(Collectors.toMap(j -> j.getString("jid"), j -> j));
     }
 
     /**
      * 返回单个job的信息
      *
-     * @param jobId
-     * @return
+     * @param jobId 32-character hexadecimal string value that identifies a job.
+     * @return details of a job.
      */
-    public String getJobMessage(String jobId) {
-
+    public JSONObject getJobMessage(String jobId) {
         log.info("request url: " + url + "jobs/" + jobId);
-        String result = "";
         try {
-            result = client.get()
+            return client.get()
                     .uri(uriBuilder -> uriBuilder.path("jobs/" + jobId).build())
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(JSONObject.class)
                     .block();
         } catch (Exception e) {
             log.error("返回止job[" + jobId + "]信息保存：" + e.getMessage());
         }
-        return result;
+        return new JSONObject();
     }
 
     /**
      * 取消job
      *
-     * @param jobId
+     * @param jobId 32-character hexadecimal string value that identifies a job.
      */
     public boolean cancelJob(String jobId) {
         log.info("request url: " + url + "jobs/" + jobId + "/yarn-cancel");
@@ -291,7 +220,10 @@ public class FlinkHttpClient {
     /**
      * 运行job 版本V2
      *
-     * @param jarID : jar包ID
+     * @param jarID :  String value that identifies a jar.
+     *              When uploading the jar a path is returned,
+     *              where the filename is the ID.
+     *              This value is equivalent to the `id` field in the list of uploaded jars (/jars).
      * @return jobID    : 作业ID
      */
     public String flinkJarRun(String jarID) {
@@ -301,11 +233,19 @@ public class FlinkHttpClient {
 
         String jobID = null;
 
-//        lastParams.part("allowNonRestoredState", null);
-//        lastParams.part("parallelism", null);
-//        lastParams.part("savepointPath", null);
-//        lastParams.part("programArgs", null);
-        bodyBuilder.part("entryClass", getEntryClass(jarID));
+        //Boolean value that specifies whether the job submission should be rejected
+        // if the savepoint contains state that cannot be mapped back to the job.
+        bodyBuilder.part("allowNonRestoredState", false);
+        //Positive integer value that specifies the desired parallelism for the job.
+        bodyBuilder.part("parallelism", null);
+        // String value that specifies the path of the savepoint to restore the job from.
+        bodyBuilder.part("savepointPath", null);
+        //Deprecated, please use 'programArg' instead.
+        // String value that specifies the arguments for the program or plan
+        bodyBuilder.part("programArg", null);
+        //String value that specifies the fully qualified name of the entry point class.
+        // Overrides the class defined in the jar file manifest.
+        bodyBuilder.part("entry-class", getEntryClass(jarID));
 
         try {
             log.info("启动flink job作业：jarId = {}", jarID);
