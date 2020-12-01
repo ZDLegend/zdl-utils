@@ -237,9 +237,9 @@ public class FlinkHttpClient {
         // if the savepoint contains state that cannot be mapped back to the job.
         bodyBuilder.part("allowNonRestoredState", false);
         //Positive integer value that specifies the desired parallelism for the job.
-        bodyBuilder.part("parallelism", null);
+        bodyBuilder.part("parallelism", 1);
         // String value that specifies the path of the savepoint to restore the job from.
-        bodyBuilder.part("savepointPath", null);
+        bodyBuilder.part("savepointPath", "/home/flink/save");
         //Deprecated, please use 'programArg' instead.
         // String value that specifies the arguments for the program or plan
         bodyBuilder.part("programArg", null);
