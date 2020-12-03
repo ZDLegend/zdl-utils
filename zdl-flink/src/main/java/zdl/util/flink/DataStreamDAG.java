@@ -22,23 +22,6 @@ public class DataStreamDAG {
         StreamNode sourceNode = new StreamNode(0, null, -1, "source");
         sourceNode.setDataStream(sourceStream);
 
-//        sourceStream.join(sourceStream).where().equalTo().window().apply().addSink();
-//
-//        sourceStream.timeWindowAll().process(new ProcessAllWindowFunction<String, Object, TimeWindow>() {
-//            /**
-//             * Evaluates the window and outputs none or several elements.
-//             *
-//             * @param context  The context in which the window is being evaluated.
-//             * @param elements The elements in the window being evaluated.
-//             * @param out      A collector for emitting elements.
-//             * @throws Exception The function may throw exceptions to fail the program and trigger recovery.
-//             */
-//            @Override
-//            public void process(Context context, Iterable<String> elements, Collector<Object> out) throws Exception {
-//
-//            }
-//        });
-
         ProcessFunction fa = getFunction("dag.transformation.Filter", "A");
         StreamNode op1 = new StreamNode(1, fa, 0, "operation");
 
@@ -80,69 +63,68 @@ public class DataStreamDAG {
         return func;
     }
 
-}
+    private static class StreamNode {
+        private int id;
+        private AbstractRichFunction op;
+        private int preNodeId;
+        private String type;
+        private DataStream dataStream;
 
 
-class StreamNode {
-    private int id;
-    private AbstractRichFunction op;
-    private int preNodeId;
-    private String type;
-    private DataStream dataStream;
+        public StreamNode(int id, AbstractRichFunction op, int preNodeId, String type) {
+            this.id = id;
+            this.op = op;
+            this.preNodeId = preNodeId;
+            this.type = type;
+        }
 
+        public String getType() {
+            return type;
+        }
 
-    public StreamNode(int id, AbstractRichFunction op, int preNodeId, String type) {
-        this.id = id;
-        this.op = op;
-        this.preNodeId = preNodeId;
-        this.type = type;
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public DataStream getDataStream() {
+            return dataStream;
+        }
+
+        public void setDataStream(DataStream ds) {
+            this.dataStream = ds;
+        }
+
+        public int getPreNodeId() {
+            return preNodeId;
+        }
+
+        public void setPreNodeId(int preNodeId) {
+            this.preNodeId = preNodeId;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public DataStream getInput() {
+            return dataStream;
+        }
+
+        public void setInput(DataStream input) {
+            this.dataStream = input;
+        }
+
+        public AbstractRichFunction getOp() {
+            return op;
+        }
+
+        public void setOp(ProcessFunction op) {
+            this.op = op;
+        }
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public DataStream getDataStream() {
-        return dataStream;
-    }
-
-    public void setDataStream(DataStream ds) {
-        this.dataStream = ds;
-    }
-
-    public int getPreNodeId() {
-        return preNodeId;
-    }
-
-    public void setPreNodeId(int preNodeId) {
-        this.preNodeId = preNodeId;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public DataStream getInput() {
-        return dataStream;
-    }
-
-    public void setInput(DataStream input) {
-        this.dataStream = input;
-    }
-
-    public AbstractRichFunction getOp() {
-        return op;
-    }
-
-    public void setOp(ProcessFunction op) {
-        this.op = op;
-    }
 }

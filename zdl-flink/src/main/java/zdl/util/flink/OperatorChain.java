@@ -65,19 +65,20 @@ public class OperatorChain {
         env.execute("transformation");
     }
 
-}
+    private static class StringFilter extends ProcessFunction<String, String> {
+        private final String flag;
 
-class StringFilter extends ProcessFunction<String, String> {
-    private String flag;
+        public StringFilter(String flag) {
+            this.flag = flag;
+        }
 
-    public StringFilter(String flag) {
-        this.flag = flag;
-    }
-
-    @Override
-    public void processElement(String value, Context ctx, Collector<String> out) throws Exception {
-        if (!value.equals(this.flag)) {
-            out.collect(value);
+        @Override
+        public void processElement(String value, Context ctx, Collector<String> out) {
+            if (!value.equals(this.flag)) {
+                out.collect(value);
+            }
         }
     }
+
 }
+
