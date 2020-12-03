@@ -104,7 +104,7 @@ public class FlinkHttpClient {
         bodyBuilder.part("jarfile", new FileSystemResource(jarPath));
 
         log.info("request url: " + url + "/jars/upload");
-        String jar_id = null;
+        String jarId = null;
 
         try {
             File jarFile = new File(jarPath + File.separator + jarName);
@@ -116,10 +116,10 @@ public class FlinkHttpClient {
                         .bodyToMono(JSONObject.class)
                         .block();
                 assert json != null;
-                if (json.containsKey("status") && json.get("status").toString().equals("success")) {
-                    jar_id = json.get("filename").toString();
-                    if (jar_id.contains("/")) {
-                        jar_id = jar_id.substring(jar_id.lastIndexOf("/") + 1);
+                if (json.containsKey("status") && json.getString("status").equals("success")) {
+                    jarId = json.getString("filename");
+                    if (jarId.contains("/")) {
+                        jarId = jarId.substring(jarId.lastIndexOf("/") + 1);
                     }
                 } else {
                     throw new RuntimeException("上传jar包失败！");
@@ -129,7 +129,7 @@ public class FlinkHttpClient {
             log.error("上传jar包失败：" + e.getMessage());
             throw new RuntimeException("上传jar包失败：" + e.getMessage());
         }
-        return jar_id;
+        return jarId;
     }
 
     /**
