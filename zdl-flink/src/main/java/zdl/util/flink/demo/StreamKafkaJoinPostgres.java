@@ -89,9 +89,9 @@ public class StreamKafkaJoinPostgres {
             Tuple5<String, String, String, String, String>> {
         private final HashMap<String, String> keyWords = new HashMap<>();
         MapStateDescriptor<String, Map<String, String>> ruleStateDescriptor
-                = new MapStateDescriptor<>("RulesBroadcastState"
-                , BasicTypeInfo.STRING_TYPE_INFO
-                , new MapTypeInfo<>(String.class, String.class));
+                = new MapStateDescriptor<>("RulesBroadcastState",
+                BasicTypeInfo.STRING_TYPE_INFO,
+                new MapTypeInfo<>(String.class, String.class));
 
         @Override
         public void open(Configuration parameters) throws Exception {
