@@ -22,7 +22,7 @@ public class StopYarnJobDemo {
 
     public static void main(String[] args) throws FlinkException, CliArgsException, ExecutionException, InterruptedException {
         String appId = "application_1592386606716_0006";
-        String jobid = "1f5d2fd883d90299365e19de7051dece";
+        String jobId = "1f5d2fd883d90299365e19de7051dece";
         String savePoint = "hdfs://localhost/flink-savepoints";
 
         Configuration flinkConfiguration = new Configuration();
@@ -37,7 +37,7 @@ public class StopYarnJobDemo {
         YarnClusterDescriptor clusterDescriptor = clusterClientFactory.createClusterDescriptor(flinkConfiguration);
         ClusterClient<ApplicationId> clusterClient = clusterDescriptor.retrieve(applicationId).getClusterClient();
 
-        JobID jobID = parseJobId(jobid);
+        JobID jobID = parseJobId(jobId);
 
         CompletableFuture<String> completableFuture
                 = clusterClient.stopWithSavepoint(jobID, true, savePoint);
