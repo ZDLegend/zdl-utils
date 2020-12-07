@@ -50,13 +50,6 @@ public class StopYarnJobDemo {
         if (jobIdString == null) {
             throw new CliArgsException("Missing JobId");
         }
-
-        final JobID jobId;
-        try {
-            jobId = JobID.fromHexString(jobIdString);
-        } catch (IllegalArgumentException e) {
-            throw new CliArgsException(e.getMessage());
-        }
-        return jobId;
+        return JobID.fromHexString(jobIdString);
     }
 }
