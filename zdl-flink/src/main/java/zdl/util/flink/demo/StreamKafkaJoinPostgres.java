@@ -101,7 +101,7 @@ public class StreamKafkaJoinPostgres {
         @Override
         public void processElement(Tuple5<String, String, String, String, String> value, ReadOnlyContext ctx,
                                    Collector<Tuple5<String, String, String, String, String>> out) throws Exception {
-//                        Thread.sleep(10000);
+
             if (keyWords.isEmpty()) {
                 Thread.sleep(10000);
                 System.out.println("初始化数据：config，请等待！！！");
@@ -122,8 +122,6 @@ public class StreamKafkaJoinPostgres {
         @Override
         public void processBroadcastElement(HashMap<String, String> value, Context ctx,
                                             Collector<Tuple5<String, String, String, String, String>> out) {
-//                        System.out.println("收到广播数据："+value.values());
-//                        BroadcastState <String, Map <String, String>> broadcastState = ctx.getBroadcastState(ruleStateDescriptor);
             keyWords.putAll(value);
         }
     }
