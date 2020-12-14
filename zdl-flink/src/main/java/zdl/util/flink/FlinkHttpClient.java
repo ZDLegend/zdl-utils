@@ -27,6 +27,12 @@ public class FlinkHttpClient {
 
     private String url;
 
+    public static void main(String[] args) {
+        FlinkHttpClient client = new FlinkHttpClient();
+        client.init("http://192.168.120.30:8081/");
+        client.flinkJarUpload("C:\\Users\\zmh\\Desktop\\", "dae-rtfilter-1.0.0.jar");
+    }
+
     public FlinkHttpClient init(String url) {
         this.url = url;
         client = WebClient.builder()
@@ -103,7 +109,7 @@ public class FlinkHttpClient {
         MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
         bodyBuilder.part("jarfile", new FileSystemResource(jarPath));
 
-        log.info("request url: " + url + "/jars/upload");
+        log.info("request url: {}jars/upload", url);
         String jarId = null;
 
         try {
@@ -133,12 +139,27 @@ public class FlinkHttpClient {
     }
 
     /**
+     * 删除已上传jar
+     * Deletes a jar previously uploaded via '/jars/upload'.
+     *
+     * @param jarId String value that identifies a jar.
+     *              When uploading the jar a path is returned, where the filename is the ID.
+     *              This value is equivalent to the `id` field in the list of uploaded jars (/jars).
+     */
+    public void deleteJar(String jarId) {
+        client.delete()
+                .uri(uriBuilder -> uriBuilder.path("jars/" + jarId).build())
+                .exchange()
+                .block();
+    }
+
+    /**
      * 返回所有job的信息
      *
      * @return Returns an overview over all jobs.
      */
     public Map<String, JSONObject> getAllJobs() {
-        log.info("request url: " + url + "jobs/overview");
+        log.info("request url: {}jobs/overview", url);
         try {
             JSONObject value = client.get()
                     .uri(uriBuilder -> uriBuilder.path("jobs/overview").build())
@@ -168,7 +189,7 @@ public class FlinkHttpClient {
      * @return Returns an overview over running jobs.
      */
     public Map<String, Map<String, Object>> getRunningJobs() {
-        log.info("request url: " + url + "jobs/overview");
+        log.info("request url: {}jobs/overview", url);
         Map<String, JSONObject> value = getAllJobs();
         return value.values().stream()
                 .filter(m -> m.get("state").equals("RUNNING"))
@@ -182,7 +203,7 @@ public class FlinkHttpClient {
      * @return details of a job.
      */
     public JSONObject getJobMessage(String jobId) {
-        log.info("request url: " + url + "jobs/" + jobId);
+        log.info("request url: {}jobs/{}", url, jobId);
         try {
             return client.get()
                     .uri(uriBuilder -> uriBuilder.path("jobs/" + jobId).build())
@@ -201,7 +222,7 @@ public class FlinkHttpClient {
      * @param jobId 32-character hexadecimal string value that identifies a job.
      */
     public boolean cancelJob(String jobId) {
-        log.info("request url: " + url + "jobs/" + jobId + "/yarn-cancel");
+        log.info("request url: {}jobs/{}/yarn-cancel", url, jobId);
 
         try {
             String result = client.get()
@@ -227,7 +248,7 @@ public class FlinkHttpClient {
      * @return jobID    : 作业ID
      */
     public String flinkJarRun(String jarID) {
-        log.info("request url: " + "/jars/" + jarID + "/run");
+        log.info("request url: {}jars/{}/run", url, jarID);
 
         MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
 
