@@ -1,5 +1,6 @@
 package zdl.util.flink;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
@@ -15,9 +16,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class FlinkHttpClient {
@@ -52,7 +53,8 @@ public class FlinkHttpClient {
         JSONObject json = client.get()
                 .uri(uriBuilder -> uriBuilder.path("jars").build())
                 .retrieve()
-                .bodyToMono(JSONObject.class)
+                .bodyToMono(String.class)
+                .map(JSON::parseObject)
                 .block();
         if (json != null && json.containsKey("files")) {
             return JSONArray.parseArray(json.get("files").toString());
@@ -119,7 +121,8 @@ public class FlinkHttpClient {
                         .uri(uriBuilder -> uriBuilder.path("/jars/upload").build())
                         .bodyValue(bodyBuilder.build())
                         .retrieve()
-                        .bodyToMono(JSONObject.class)
+                        .bodyToMono(String.class)
+                        .map(JSON::parseObject)
                         .block();
                 assert json != null;
                 if (json.containsKey("status") && json.getString("status").equals("success")) {
@@ -164,16 +167,20 @@ public class FlinkHttpClient {
             JSONObject value = client.get()
                     .uri(uriBuilder -> uriBuilder.path("jobs/overview").build())
                     .retrieve()
-                    .bodyToMono(JSONObject.class)
+                    .bodyToMono(String.class)
+                    .map(JSON::parseObject)
                     .block();
             assert value != null;
             if (value.containsKey("jobs")) {
                 JSONArray array = value.getJSONArray("jobs");
                 if (array != null) {
-                    return array.stream()
-                            .map(o -> (JSONObject) o)
-                            .filter(j -> j.containsKey("jid"))
-                            .collect(Collectors.toMap(j -> j.getString("jid"), j -> j));
+                    Map<String, JSONObject> map = new HashMap<>();
+                    jsonArrayForEach(array, json -> {
+                        if (json.containsKey("jid")) {
+                            map.put(json.getString("jid"), json);
+                        }
+                    });
+                    return map;
                 }
             }
         } catch (Exception e) {
@@ -208,7 +215,8 @@ public class FlinkHttpClient {
             return client.get()
                     .uri(uriBuilder -> uriBuilder.path("jobs/" + jobId).build())
                     .retrieve()
-                    .bodyToMono(JSONObject.class)
+                    .bodyToMono(String.class)
+                    .map(JSON::parseObject)
                     .block();
         } catch (Exception e) {
             log.error("返回止job[" + jobId + "]信息保存：" + e.getMessage());
@@ -274,12 +282,13 @@ public class FlinkHttpClient {
                     .uri(uriBuilder -> uriBuilder.path("/jars/" + jarID + "/run").build())
                     .bodyValue(bodyBuilder.build())
                     .retrieve()
-                    .bodyToMono(JSONObject.class)
+                    .bodyToMono(String.class)
+                    .map(JSON::parseObject)
                     .block();
             log.info("运行job结果：" + json);
             assert json != null;
             if (json.containsKey("jobid")) {
-                jobID = json.get("jobid").toString();
+                jobID = json.getString("jobid");
             } else {
                 throw new Exception("未获取到作业ID，运行结果：" + json);
             }
@@ -290,18 +299,17 @@ public class FlinkHttpClient {
     }
 
     /**
-     * 解析array 变成list
+     * 解析Json Array 中的json数据
+     * 0
      *
      * @param jsonArray JSONArray in
-     * @param arrayList ArrayList out
+     * @param consumer  List out
      */
-    public static void addList(JSONArray jsonArray, ArrayList<String> arrayList) {
+    public static void jsonArrayForEach(JSONArray jsonArray, Consumer<JSONObject> consumer) {
         if (jsonArray != null) {
             for (int d = 0; d < jsonArray.size(); d++) {
-                String value = jsonArray.getString(d);
-                if (value != null && value.trim().length() > 0) {
-                    arrayList.add(value.trim());
-                }
+                JSONObject value = jsonArray.getJSONObject(d);
+                consumer.accept(value);
             }
         }
     }
