@@ -174,13 +174,10 @@ public class FlinkHttpClient {
             if (value.containsKey("jobs")) {
                 JSONArray array = value.getJSONArray("jobs");
                 if (array != null) {
-                    Map<String, JSONObject> map = new HashMap<>();
-                    jsonArrayForEach(array, json -> {
-                        if (json.containsKey("jid")) {
-                            map.put(json.getString("jid"), json);
-                        }
-                    });
-                    return map;
+                    return array.stream()
+                            .map(o -> (JSONObject) o)
+                            .filter(j -> j.containsKey("jid"))
+                            .collect(Collectors.toMap(j -> j.getString("jid"), j -> j));
                 }
             }
         } catch (Exception e) {
