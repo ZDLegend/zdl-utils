@@ -57,7 +57,7 @@ public class FlinkHttpClient {
                 .map(JSON::parseObject)
                 .block();
         if (json != null && json.containsKey("files")) {
-            return JSONArray.parseArray(json.get("files").toString());
+            return JSONArray.parseArray(json.getString("files"));
         } else {
             return new JSONArray();
         }
@@ -75,7 +75,7 @@ public class FlinkHttpClient {
                 .map(o -> (JSONObject) o)
                 .forEach(j -> {
                     if (j.containsKey("name") && j.containsKey("id")) {
-                        jarsList.put(j.get("id").toString(), j.get("name").toString());
+                        jarsList.put(j.getString("id"), j.getString("name"));
                     }
                 });
         return jarsList;
@@ -90,7 +90,7 @@ public class FlinkHttpClient {
         return getJarsNameStr()
                 .stream()
                 .map(o -> (JSONObject) o)
-                .filter(value -> value.containsKey("id") && value.containsKey("entry") && value.get("id").toString().equals(jarID))
+                .filter(value -> value.containsKey("id") && value.containsKey("entry") && value.getString("id").equals(jarID))
                 .map(j -> j.getJSONArray("entry"))
                 .filter(arrayEntry -> arrayEntry != null && arrayEntry.size() > 0)
                 .findAny()
