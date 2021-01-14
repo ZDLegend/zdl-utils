@@ -135,8 +135,7 @@ public class FlinkHttpClient {
                 }
             }
         } catch (Exception e) {
-            log.error("上传jar包失败：" + e.getMessage());
-            throw new RuntimeException("上传jar包失败：" + e.getMessage());
+            log.error("上传jar包失败", e);
         }
         return jarId;
     }
@@ -181,7 +180,7 @@ public class FlinkHttpClient {
                 }
             }
         } catch (Exception e) {
-            log.error("返回所有job信息报错：" + e.getMessage());
+            log.error("返回所有job信息报错", e);
         }
 
         return new HashMap<>();
@@ -216,7 +215,7 @@ public class FlinkHttpClient {
                     .map(JSON::parseObject)
                     .block();
         } catch (Exception e) {
-            log.error("返回止job[" + jobId + "]信息保存：" + e.getMessage());
+            log.error("返回止job[{}]信息错误", jobId, e);
         }
         return new JSONObject();
     }
@@ -235,10 +234,10 @@ public class FlinkHttpClient {
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
-            log.info("停止job[" + jobId + "]结果：" + result);
+            log.info("停止job[{}]结果：{}", jobId, result);
             return true;
         } catch (Exception e) {
-            log.error("取消作业[" + jobId + "]报错：" + e.getMessage());
+            log.error("取消作业[{}]报错", jobId, e);
             return false;
         }
     }
@@ -290,7 +289,7 @@ public class FlinkHttpClient {
                 throw new Exception("未获取到作业ID，运行结果：" + json);
             }
         } catch (Exception e) {
-            log.error("运行jar[" + jarID + "]报错：" + e.getMessage());
+            log.error("运行jar[{}]报错", jarID, e);
         }
         return jobID;
     }
