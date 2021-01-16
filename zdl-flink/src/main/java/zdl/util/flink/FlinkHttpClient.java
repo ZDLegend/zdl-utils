@@ -14,9 +14,13 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import zdl.util.flink.bean.FlinkTaskmanagers;
+import zdl.util.flink.bean.Taskmanager;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -42,6 +46,23 @@ public class FlinkHttpClient {
                 .filter(logResponse())
                 .build();
         return this;
+    }
+
+    /**
+     * @return Returns an overview over all task managers.
+     */
+    public List<Taskmanager> getTaskManagers() {
+        FlinkTaskmanagers flinkTaskManagers = client.get()
+                .uri(uriBuilder -> uriBuilder.path("taskmanagers").build())
+                .retrieve()
+                .bodyToMono(FlinkTaskmanagers.class)
+                .block();
+
+        if (flinkTaskManagers != null) {
+            return flinkTaskManagers.getTaskmanagers();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     /**
