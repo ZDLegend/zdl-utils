@@ -78,7 +78,7 @@ public class FlinkHttpClient {
                 .map(JSON::parseObject)
                 .block();
         if (json != null && json.containsKey("files")) {
-            return JSONArray.parseArray(json.getString("files"));
+            return JSON.parseArray(json.getString("files"));
         } else {
             return new JSONArray();
         }
