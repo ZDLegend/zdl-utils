@@ -113,7 +113,7 @@ public class FlinkHttpClient {
                 .map(o -> (JSONObject) o)
                 .filter(value -> value.containsKey("id") && value.containsKey("entry") && value.getString("id").equals(jarID))
                 .map(j -> j.getJSONArray("entry"))
-                .filter(arrayEntry -> arrayEntry != null && arrayEntry.size() > 0)
+                .filter(arrayEntry -> arrayEntry != null && !arrayEntry.isEmpty())
                 .findAny()
                 .orElse(new JSONArray())
                 .getJSONObject(0)
