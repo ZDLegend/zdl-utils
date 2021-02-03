@@ -25,6 +25,15 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * Flink has a monitoring API that can be used to query status and statistics of running jobs,
+ * as well as recent completed jobs. This monitoring API is used by Flink’s own dashboard,
+ * but is designed to be used also by custom monitoring tools.
+ * <p>
+ * The monitoring API is a REST-ful API that accepts HTTP requests and responds with JSON data.
+ *
+ * <p>API official documents: {@code https://ci.apache.org/projects/flink/flink-docs-release-1.12/ops/rest_api.html}
+ */
 public class FlinkHttpClient {
     private static final Logger log = LoggerFactory.getLogger(FlinkHttpClient.class);
 
