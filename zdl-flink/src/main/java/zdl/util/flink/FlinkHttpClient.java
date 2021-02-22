@@ -61,10 +61,13 @@ public class FlinkHttpClient {
      * @return Returns an overview over all task managers.
      */
     public List<Taskmanager> getTaskManagers() {
-        FlinkTaskmanagers flinkTaskManagers = client.get()
+        var flinkTaskManagers = client.get()
                 .uri(uriBuilder -> uriBuilder.path("taskmanagers").build())
                 .retrieve()
                 .bodyToMono(FlinkTaskmanagers.class)
+                .doOnError(Exception.class, e -> {
+                    throw new FlinkHttpException(e);
+                })
                 .block();
 
         if (flinkTaskManagers != null) {
@@ -80,11 +83,14 @@ public class FlinkHttpClient {
      * @return Returns a list of all jars previously uploaded via '/jars/upload'.
      */
     public JSONArray getJarsNameStr() {
-        JSONObject json = client.get()
+        var json = client.get()
                 .uri(uriBuilder -> uriBuilder.path("jars").build())
                 .retrieve()
                 .bodyToMono(String.class)
                 .map(JSON::parseObject)
+                .doOnError(Exception.class, e -> {
+                    throw new FlinkHttpException(e);
+                })
                 .block();
         if (json != null && json.containsKey("files")) {
             return JSON.parseArray(json.getString("files"));
@@ -99,7 +105,7 @@ public class FlinkHttpClient {
      * @return <jar_id, 文件名>
      */
     public JSONObject getJarsName() {
-        JSONObject jarsList = new JSONObject();
+        var jarsList = new JSONObject();
         getJarsNameStr()
                 .stream()
                 .map(JSONObject.class::cast)
@@ -138,34 +144,32 @@ public class FlinkHttpClient {
      */
     public String flinkJarUpload(String jarPath, String jarName) {
 
-        MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
+        var bodyBuilder = new MultipartBodyBuilder();
         bodyBuilder.part("jarfile", new FileSystemResource(jarPath));
 
         log.info("request url: {}jars/upload", url);
         String jarId = null;
-
-        try {
-            File jarFile = new File(jarPath + File.separator + jarName);
-            if (jarFile.exists()) {
-                JSONObject json = client.post()
-                        .uri(uriBuilder -> uriBuilder.path("/jars/upload").build())
-                        .bodyValue(bodyBuilder.build())
-                        .retrieve()
-                        .bodyToMono(String.class)
-                        .map(JSON::parseObject)
-                        .block();
-                assert json != null;
-                if (json.containsKey("status") && json.getString("status").equals("success")) {
-                    jarId = json.getString("filename");
-                    if (jarId.contains("/")) {
-                        jarId = jarId.substring(jarId.lastIndexOf("/") + 1);
-                    }
-                } else {
-                    throw new FlinkHttpException("上传jar包失败！");
+        var jarFile = new File(jarPath + File.separator + jarName);
+        if (jarFile.exists()) {
+            JSONObject json = client.post()
+                    .uri(uriBuilder -> uriBuilder.path("/jars/upload").build())
+                    .bodyValue(bodyBuilder.build())
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .map(JSON::parseObject)
+                    .doOnError(Exception.class, e -> {
+                        throw new FlinkHttpException(e);
+                    })
+                    .block();
+            assert json != null;
+            if (json.containsKey("status") && json.getString("status").equals("success")) {
+                jarId = json.getString("filename");
+                if (jarId.contains("/")) {
+                    jarId = jarId.substring(jarId.lastIndexOf("/") + 1);
                 }
+            } else {
+                throw new FlinkHttpException("上传jar包失败！");
             }
-        } catch (Exception e) {
-            log.error("上传jar包失败", e);
         }
         return jarId;
     }
@@ -182,6 +186,9 @@ public class FlinkHttpClient {
         client.delete()
                 .uri(uriBuilder -> uriBuilder.path("jars/" + jarId).build())
                 .exchange()
+                .doOnError(Exception.class, e -> {
+                    throw new FlinkHttpException(e);
+                })
                 .block();
     }
 
@@ -192,25 +199,24 @@ public class FlinkHttpClient {
      */
     public Map<String, JSONObject> getAllJobs() {
         log.info("request url: {}jobs/overview", url);
-        try {
-            JSONObject value = client.get()
-                    .uri(uriBuilder -> uriBuilder.path("jobs/overview").build())
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .map(JSON::parseObject)
-                    .block();
-            assert value != null;
-            if (value.containsKey("jobs")) {
-                JSONArray array = value.getJSONArray("jobs");
-                if (array != null) {
-                    return array.stream()
-                            .map(JSONObject.class::cast)
-                            .filter(j -> j.containsKey("jid"))
-                            .collect(Collectors.toMap(j -> j.getString("jid"), j -> j));
-                }
+        var value = client.get()
+                .uri(uriBuilder -> uriBuilder.path("jobs/overview").build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(JSON::parseObject)
+                .doOnError(Exception.class, e -> {
+                    throw new FlinkHttpException(e);
+                })
+                .block();
+        assert value != null;
+        if (value.containsKey("jobs")) {
+            var array = value.getJSONArray("jobs");
+            if (array != null) {
+                return array.stream()
+                        .map(JSONObject.class::cast)
+                        .filter(j -> j.containsKey("jid"))
+                        .collect(Collectors.toMap(j -> j.getString("jid"), j -> j));
             }
-        } catch (Exception e) {
-            log.error("返回所有job信息报错", e);
         }
 
         return new HashMap<>();
@@ -223,7 +229,7 @@ public class FlinkHttpClient {
      */
     public Map<String, Map<String, Object>> getRunningJobs() {
         log.info("request url: {}jobs/overview", url);
-        Map<String, JSONObject> value = getAllJobs();
+        var value = getAllJobs();
         return value.values().stream()
                 .filter(m -> m.get("state").equals("RUNNING"))
                 .collect(Collectors.toMap(j -> j.getString("jid"), j -> j));
@@ -237,17 +243,15 @@ public class FlinkHttpClient {
      */
     public JSONObject getJobMessage(String jobId) {
         log.info("request url: {}jobs/{}", url, jobId);
-        try {
-            return client.get()
-                    .uri(uriBuilder -> uriBuilder.path("jobs/" + jobId).build())
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .map(JSON::parseObject)
-                    .block();
-        } catch (Exception e) {
-            log.error("返回止job[{}]信息错误", jobId, e);
-        }
-        return new JSONObject();
+        return client.get()
+                .uri(uriBuilder -> uriBuilder.path("jobs/" + jobId).build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(JSON::parseObject)
+                .doOnError(Exception.class, e -> {
+                    throw new FlinkHttpException(e);
+                })
+                .block();
     }
 
     /**
@@ -263,6 +267,9 @@ public class FlinkHttpClient {
                     .uri(uriBuilder -> uriBuilder.path("jobs/" + jobId + "/yarn-cancel").build())
                     .retrieve()
                     .bodyToMono(String.class)
+                    .doOnError(Exception.class, e -> {
+                        throw new FlinkHttpException(e);
+                    })
                     .block();
             log.info("停止job[{}]结果：{}", jobId, result);
             return true;
@@ -284,9 +291,9 @@ public class FlinkHttpClient {
     public String flinkJarRun(String jarID) {
         log.info("request url: {}jars/{}/run", url, jarID);
 
-        MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
+        var bodyBuilder = new MultipartBodyBuilder();
 
-        String jobID = null;
+        String jobID;
 
         //Boolean value that specifies whether the job submission should be rejected
         // if the savepoint contains state that cannot be mapped back to the job.
@@ -302,24 +309,23 @@ public class FlinkHttpClient {
         // Overrides the class defined in the jar file manifest.
         bodyBuilder.part("entry-class", getEntryClass(jarID));
 
-        try {
-            log.info("启动flink job作业：jarId = {}", jarID);
-            JSONObject json = client.post()
-                    .uri(uriBuilder -> uriBuilder.path("/jars/" + jarID + "/run").build())
-                    .bodyValue(bodyBuilder.build())
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .map(JSON::parseObject)
-                    .block();
-            log.info("运行job结果：{}", json);
-            assert json != null;
-            if (json.containsKey("jobid")) {
-                jobID = json.getString("jobid");
-            } else {
-                throw new FlinkHttpException("未获取到作业ID，运行结果：" + json);
-            }
-        } catch (Exception e) {
-            log.error("运行jar[{}]报错", jarID, e);
+        log.info("启动flink job作业：jarId = {}", jarID);
+        var json = client.post()
+                .uri(uriBuilder -> uriBuilder.path("/jars/" + jarID + "/run").build())
+                .bodyValue(bodyBuilder.build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .map(JSON::parseObject)
+                .doOnError(Exception.class, e -> {
+                    throw new FlinkHttpException(e);
+                })
+                .block();
+        log.info("运行job结果：{}", json);
+        assert json != null;
+        if (json.containsKey("jobid")) {
+            jobID = json.getString("jobid");
+        } else {
+            throw new FlinkHttpException("未获取到作业ID，运行结果：" + json);
         }
         return jobID;
     }
@@ -334,7 +340,7 @@ public class FlinkHttpClient {
     public static void jsonArrayForEach(JSONArray jsonArray, Consumer<JSONObject> consumer) {
         if (jsonArray != null) {
             for (int d = 0; d < jsonArray.size(); d++) {
-                JSONObject value = jsonArray.getJSONObject(d);
+                var value = jsonArray.getJSONObject(d);
                 consumer.accept(value);
             }
         }
