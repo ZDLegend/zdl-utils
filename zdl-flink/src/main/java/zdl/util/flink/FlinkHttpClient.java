@@ -102,7 +102,7 @@ public class FlinkHttpClient {
         JSONObject jarsList = new JSONObject();
         getJarsNameStr()
                 .stream()
-                .map(o -> (JSONObject) o)
+                .map(JSONObject.class::cast)
                 .forEach(j -> {
                     if (j.containsKey("name") && j.containsKey("id")) {
                         jarsList.put(j.getString("id"), j.getString("name"));
@@ -119,7 +119,7 @@ public class FlinkHttpClient {
     public String getEntryClass(String jarID) {
         return getJarsNameStr()
                 .stream()
-                .map(o -> (JSONObject) o)
+                .map(JSONObject.class::cast)
                 .filter(value -> value.containsKey("id") && value.containsKey("entry") && value.getString("id").equals(jarID))
                 .map(j -> j.getJSONArray("entry"))
                 .filter(arrayEntry -> arrayEntry != null && !arrayEntry.isEmpty())
@@ -161,7 +161,7 @@ public class FlinkHttpClient {
                         jarId = jarId.substring(jarId.lastIndexOf("/") + 1);
                     }
                 } else {
-                    throw new RuntimeException("上传jar包失败！");
+                    throw new FlinkHttpException("上传jar包失败！");
                 }
             }
         } catch (Exception e) {
@@ -204,7 +204,7 @@ public class FlinkHttpClient {
                 JSONArray array = value.getJSONArray("jobs");
                 if (array != null) {
                     return array.stream()
-                            .map(o -> (JSONObject) o)
+                            .map(JSONObject.class::cast)
                             .filter(j -> j.containsKey("jid"))
                             .collect(Collectors.toMap(j -> j.getString("jid"), j -> j));
                 }
@@ -297,7 +297,7 @@ public class FlinkHttpClient {
         bodyBuilder.part("savepointPath", "/home/flink/save");
         //Deprecated, please use 'programArg' instead.
         // String value that specifies the arguments for the program or plan
-        bodyBuilder.part("programArg", null);
+        bodyBuilder.part("programArg", "");
         //String value that specifies the fully qualified name of the entry point class.
         // Overrides the class defined in the jar file manifest.
         bodyBuilder.part("entry-class", getEntryClass(jarID));
@@ -311,12 +311,12 @@ public class FlinkHttpClient {
                     .bodyToMono(String.class)
                     .map(JSON::parseObject)
                     .block();
-            log.info("运行job结果：" + json);
+            log.info("运行job结果：{}", json);
             assert json != null;
             if (json.containsKey("jobid")) {
                 jobID = json.getString("jobid");
             } else {
-                throw new Exception("未获取到作业ID，运行结果：" + json);
+                throw new FlinkHttpException("未获取到作业ID，运行结果：" + json);
             }
         } catch (Exception e) {
             log.error("运行jar[{}]报错", jarID, e);

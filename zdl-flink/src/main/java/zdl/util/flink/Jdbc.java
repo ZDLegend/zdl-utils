@@ -16,6 +16,10 @@ import org.apache.flink.types.Row;
  */
 public class Jdbc {
 
+    private Jdbc() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static void flinkJdbc() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);

@@ -35,6 +35,8 @@ public class FlinkDemo {
 
     private static int index = 1;
 
+    private static final String LOCALHOST = "localhost";
+
     /**
      * map可以理解为映射，对每个元素进行一定的变换后，映射为另一个元素。
      */
@@ -42,7 +44,7 @@ public class FlinkDemo {
         //1.获取执行环境配置信息
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         //2.定义加载或创建数据源（source）,监听9000端口的socket消息
-        DataStream<String> textStream = env.socketTextStream("localhost", 9000, "\n");
+        DataStream<String> textStream = env.socketTextStream(LOCALHOST, 9000, "\n");
         //3.map操作。
         DataStream<String> result = textStream.map(s -> (index++) + ".您输入的是：" + s);
         //4.打印输出sink
@@ -58,7 +60,7 @@ public class FlinkDemo {
         //1.获取执行环境配置信息
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         //2.定义加载或创建数据源（source）,监听9000端口的socket消息
-        DataStream<String> textStream = env.socketTextStream("localhost", 9000, "\n");
+        DataStream<String> textStream = env.socketTextStream(LOCALHOST, 9000, "\n");
         //3.flatMap操作，对每一行字符串进行分割
         DataStream<String> result = textStream.flatMap((String s, Collector<String> collector) -> {
             for (String str : s.split("")) {
@@ -84,7 +86,7 @@ public class FlinkDemo {
         //1.获取执行环境配置信息
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         //2.定义加载或创建数据源（source）,监听9000端口的socket消息
-        DataStream<String> textStream = env.socketTextStream("localhost", 9000, "\n");
+        DataStream<String> textStream = env.socketTextStream(LOCALHOST, 9000, "\n");
         //3.filter操作，筛选非空行。
         DataStream<String> result = textStream.filter(line -> !line.trim().equals(""));
         //4.打印输出sink
@@ -100,7 +102,7 @@ public class FlinkDemo {
         //1.获取执行环境配置信息
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         //2.定义加载或创建数据源（source）,监听9000端口的socket消息
-        DataStream<String> textStream = env.socketTextStream("localhost", 9000, "\n");
+        DataStream<String> textStream = env.socketTextStream(LOCALHOST, 9000, "\n");
         //3.
         DataStream<Tuple2<String, Integer>> result = textStream
                 //map是将每一行单词变为一个tuple2
@@ -126,7 +128,7 @@ public class FlinkDemo {
         //1.获取执行环境配置信息
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         //2.定义加载或创建数据源（source）,监听9000端口的socket消息
-        DataStream<String> textStream = env.socketTextStream("localhost", 9000, "\n");
+        DataStream<String> textStream = env.socketTextStream(LOCALHOST, 9000, "\n");
         //3.
         DataStream<Tuple2<String, Integer>> result = textStream
                 //map是将每一行单词变为一个tuple2
@@ -153,7 +155,7 @@ public class FlinkDemo {
         //1.获取执行环境配置信息
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         //2.定义加载或创建数据源（source）,监听9000端口的socket消息
-        DataStream<String> textStream = env.socketTextStream("localhost", 9000, "\n");
+        DataStream<String> textStream = env.socketTextStream(LOCALHOST, 9000, "\n");
         //3.
         DataStream<String> result = textStream
                 //map是将每一行单词变为一个tuple2
@@ -181,9 +183,9 @@ public class FlinkDemo {
         //1.获取执行环境配置信息
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         //2.定义加载或创建数据源（source）,监听9000端口的socket消息
-        DataStream<String> textStream9000 = env.socketTextStream("localhost", 9000, "\n");
-        DataStream<String> textStream9001 = env.socketTextStream("localhost", 9001, "\n");
-        DataStream<String> textStream9002 = env.socketTextStream("localhost", 9002, "\n");
+        DataStream<String> textStream9000 = env.socketTextStream(LOCALHOST, 9000, "\n");
+        DataStream<String> textStream9001 = env.socketTextStream(LOCALHOST, 9001, "\n");
+        DataStream<String> textStream9002 = env.socketTextStream(LOCALHOST, 9002, "\n");
 
         DataStream<String> mapStream9000 = textStream9000.map(s -> "来自9000端口：" + s);
         DataStream<String> mapStream9001 = textStream9001.map(s -> "来自9001端口：" + s);
@@ -206,8 +208,8 @@ public class FlinkDemo {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         //2.定义加载或创建数据源（source）,监听9000端口的socket消息
-        DataStream<String> textStream9000 = env.socketTextStream("localhost", 9000, "\n");
-        DataStream<String> textStream9001 = env.socketTextStream("localhost", 9001, "\n");
+        DataStream<String> textStream9000 = env.socketTextStream(LOCALHOST, 9000, "\n");
+        DataStream<String> textStream9001 = env.socketTextStream(LOCALHOST, 9001, "\n");
         //将输入处理一下，变为tuple2
         DataStream<Tuple2<String, String>> mapStream9000 = textStream9000
                 .map((MapFunction<String, Tuple2<String, String>>) s -> Tuple2.of(s, "来自9000端口：" + s));
@@ -238,8 +240,8 @@ public class FlinkDemo {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         //2.定义加载或创建数据源（source）,监听9000端口的socket消息
-        DataStream<String> textStream9000 = env.socketTextStream("localhost", 9000, "\n");
-        DataStream<String> textStream9001 = env.socketTextStream("localhost", 9001, "\n");
+        DataStream<String> textStream9000 = env.socketTextStream(LOCALHOST, 9000, "\n");
+        DataStream<String> textStream9001 = env.socketTextStream(LOCALHOST, 9001, "\n");
         //将输入处理一下，变为tuple2
         DataStream<Tuple2<String, String>> mapStream9000 = textStream9000
                 .map((MapFunction<String, Tuple2<String, String>>) s -> Tuple2.of(s, "来自9000端口：" + s));
@@ -277,7 +279,7 @@ public class FlinkDemo {
         final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
 
-        DataStream<String> textStream = env.socketTextStream("localhost", 9000, "\n");
+        DataStream<String> textStream = env.socketTextStream(LOCALHOST, 9000, "\n");
         //flink.1.11.1显示SplitStream类过时，推荐用keyBy的方式进行窗口处理或SideOutput侧输出流处理；注意，使用split切分后的流，不可二次切分，否则会抛异常
         SplitStream<Tuple3<String, String, Integer>> split = textStream
                 //map是将每一行单词变为一个tuple2

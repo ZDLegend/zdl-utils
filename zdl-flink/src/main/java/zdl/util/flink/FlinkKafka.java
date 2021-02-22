@@ -17,6 +17,11 @@ import java.util.Properties;
  * @date 2020/11/02/ 13:51
  */
 public class FlinkKafka {
+
+    private FlinkKafka() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static void kafkaConsumer() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.enableCheckpointing(5000);
