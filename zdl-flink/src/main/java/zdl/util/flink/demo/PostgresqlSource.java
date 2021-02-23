@@ -78,7 +78,7 @@ public class PostgresqlSource extends RichSourceFunction<String> {
         }
     }
 
-    private class Word {
+    private static class Word {
         private String code;
         private String name;
 
@@ -97,11 +97,6 @@ public class PostgresqlSource extends RichSourceFunction<String> {
         public String getName() {
             return name;
 
-        }
-
-        public Word() {
-            this.code = code;
-            this.name = name;
         }
 
         @Override
