@@ -23,6 +23,7 @@
         <module>zdl-azkaban</module>
         <module>zdl-easy-db</module>
         <module>zdl-flink</module>
+        <module>zdl-doc</module>
     </modules>
 
     <properties>
