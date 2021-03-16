@@ -194,8 +194,8 @@ public class MonitorService {
             while ((line = input.readLine()) != null) {
 
                 // 字段出现顺序：Caption,CommandLine,KernelModeTime,ReadOperationCount,
-                String caption = Bytes.substring(line, capidx, cmdidx - 1).trim();
-                String cmd = Bytes.substring(line, cmdidx, kmtidx - 1).trim();
+                String caption = substring(line, capidx, cmdidx - 1).trim();
+                String cmd = substring(line, cmdidx, kmtidx - 1).trim();
 
                 if (line.length() < wocidx || cmd.contains("wmic.exe")) {
                     continue;
@@ -203,11 +203,11 @@ public class MonitorService {
 
                 if (caption.equals("System Idle Process") || caption.equals("System")) {
                     idletime = idletime
-                            + Long.valueOf(Bytes.substring(line, kmtidx, rocidx - 1).trim())
-                            + Long.valueOf(Bytes.substring(line, umtidx, wocidx - 1).trim());
+                            + Long.parseLong(substring(line, kmtidx, rocidx - 1).trim())
+                            + Long.parseLong(substring(line, umtidx, wocidx - 1).trim());
                 } else {
-                    kneltime += Long.valueOf(Bytes.substring(line, kmtidx, rocidx - 1).trim());
-                    usertime += Long.valueOf(Bytes.substring(line, umtidx, wocidx - 1).trim());
+                    kneltime += Long.parseLong(substring(line, kmtidx, rocidx - 1).trim());
+                    usertime += Long.parseLong(substring(line, umtidx, wocidx - 1).trim());
                 }
             }
 
@@ -225,6 +225,15 @@ public class MonitorService {
         }
 
         return new long[0];
+    }
+
+    static String substring(String src, int startIdx, int endIdx) {
+        byte[] b = src.getBytes();
+        StringBuilder tgt = new StringBuilder();
+        for (int i = startIdx; i <= endIdx; i++) {
+            tgt.append((char) b[i]);
+        }
+        return tgt.toString();
     }
 
     /**
@@ -246,16 +255,5 @@ public class MonitorService {
         System.out.println("线程总数=" + monitorInfo.getTotalThread() + "kb");
 
         System.out.println("已用内存占用=" + (double) monitorInfo.getUsedMemory() / (double) monitorInfo.getTotalMemorySize());
-    }
-
-    private static class Bytes {
-        static String substring(String src, int startIdx, int endIdx) {
-            byte[] b = src.getBytes();
-            StringBuilder tgt = new StringBuilder();
-            for (int i = startIdx; i <= endIdx; i++) {
-                tgt.append((char) b[i]);
-            }
-            return tgt.toString();
-        }
     }
 }
