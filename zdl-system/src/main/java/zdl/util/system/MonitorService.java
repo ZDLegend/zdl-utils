@@ -240,8 +240,7 @@ public class MonitorService {
      * 测试方法.
      */
     public static void main(String[] args) {
-        MonitorService service = new MonitorService();
-        MonitorInfoBean monitorInfo = service.getMonitorInfoBean();
+        MonitorInfoBean monitorInfo = MonitorService.getMonitorInfoBean();
         System.out.println("cpu占有率=" + monitorInfo.getCpuRatio());
 
         System.out.println("可使用内存=" + monitorInfo.getJvmMemory() / KB);
