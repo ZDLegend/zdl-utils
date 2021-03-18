@@ -15,7 +15,7 @@ import java.util.List;
  * @version 1.0
  * @date 2021/03/16/ 20:52
  */
-public class Java7Character implements AutoCloseable {
+public class Java7Features implements AutoCloseable {
 
     /**
      * 1.switch中可以使用字串了

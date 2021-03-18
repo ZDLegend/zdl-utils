@@ -7,7 +7,7 @@ package zdl.util.doc;
  * @version 1.0
  * @date 2021/03/16/ 20:44
  */
-public class Java5Character {
+public class Java5Features {
 
     /**
      * JDK1.5新特性：<p>

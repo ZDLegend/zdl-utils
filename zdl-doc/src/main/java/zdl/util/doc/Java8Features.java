@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * @version 1.0
  * @date 2021/03/17/ 09:23
  */
-public class Java8Character {
+public class Java8Features {
 
     /**
      * 1.Lambda表达式
@@ -100,7 +100,7 @@ public class Java8Character {
 
     /**
      * 7.最新的Date/Time API (JSR 310)
-     * <li>注：TemporalAdjusters类中有许多常用的特殊的日期的方法（类方法），使用时可以仔细查看，可以很大程度减少日期判断的代码量！
+     * <li>注：{@link TemporalAdjusters}类中有许多常用的特殊的日期的方法（类方法），使用时可以仔细查看，可以很大程度减少日期判断的代码量！
      */
     public void time() {
         //获取当前日期
