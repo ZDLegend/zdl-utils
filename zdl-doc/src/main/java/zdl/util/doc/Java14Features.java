@@ -27,10 +27,10 @@ public class Java14Features {
      * 1. instanceof的模式匹配<p>
      * 使用instanceof关键字来判断对象的真实类型，可以不用强制转换了，从而减少冗余的代码
      */
-    public boolean testInstanceof(Person person) {
-        Object obj = new Person("Tom", 18);
-        if (obj instanceof Person p) {
-            System.out.println(p);
+    public boolean testInstanceof(Object person) {
+        Person obj = new Person("Tom", 18);
+        if (person instanceof Person p) {
+            System.out.println(p.getName());
         }
         return person.equals(obj);
     }
