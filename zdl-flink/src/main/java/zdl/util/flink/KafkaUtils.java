@@ -35,13 +35,13 @@ public class KafkaUtils {
             CreateTopicsResult topicsResult = client.createTopics(topicList);
             try {
                 topicsResult.all().get();
-                logger.info("create the " + topic + " success!");
+                logger.info("create the {} success!", topic);
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 e.printStackTrace();
             }
         } else {
-            logger.warn("the " + topic + " has exist!");
+            logger.warn("the has {} exist!", topic);
         }
     }
 
@@ -58,7 +58,7 @@ public class KafkaUtils {
             topicList.add(topic);
             try {
                 client.deleteTopics(topicList).all().get();
-                logger.info("delete " + topic + " success!");
+                logger.info("delete {} success!", topic);
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 e.printStackTrace();
@@ -78,10 +78,10 @@ public class KafkaUtils {
         try {
             Set<String> topicSet = listTopics.names().get();
             if (topicSet.contains(topic)) {
-                logger.info("the " + topic + " exist !");
+                logger.info("the {} exist !", topic);
                 return true;
             } else {
-                logger.info("the " + topic + " not exist !");
+                logger.info("the {} not exist !", topic);
                 return false;
             }
         } catch (Exception e) {
