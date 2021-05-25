@@ -24,6 +24,7 @@
         <module>zdl-easy-db</module>
         <module>zdl-flink</module>
         <module>zdl-doc</module>
+        <module>zdl-milvus</module>
     </modules>
 
     <properties>
