@@ -6,6 +6,7 @@ import io.milvus.client.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Milvus
@@ -144,5 +145,26 @@ public class MilvusUtils {
             }
         }
         return finalResult;
+    }
+
+    public static void flush(String collectionName) {
+        Response response = client.flush(collectionName);
+        if (!response.ok()) {
+
+        }
+    }
+
+    public static void dropCollection(String collectionName) {
+        HasCollectionResponse response = client.hasCollection(collectionName);
+        if (response.hasCollection()) {
+            client.dropCollection(collectionName);
+        }
+    }
+
+    static List<Float> normalizeVector(List<Float> vector) {
+        float squareSum = vector.stream().map(x -> x * x).reduce((float) 0, Float::sum);
+        final float norm = (float) Math.sqrt(squareSum);
+        vector = vector.stream().map(x -> x / norm).collect(Collectors.toList());
+        return vector;
     }
 }
