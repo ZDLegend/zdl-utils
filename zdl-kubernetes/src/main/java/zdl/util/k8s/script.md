@@ -2,7 +2,7 @@
 ### pod相关
 * 查看所有pod运行情况: kubectl get pod
 * 查看所有pod路由: kubectl get svc
-* 进入某pod内: kubectl exec -it {podName} /bin/bash 
+* 进入某pod内: kubectl exec -it {podName} bash
 * 删除pod（可以用来重启）: kubectl delete pod {podName}
 * 实时查看pod日志: kubectl logs -f {podName}
 * 编辑某个pod配置并重新加载: kubectl edit sts {serviceName}
