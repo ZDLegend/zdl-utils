@@ -25,6 +25,7 @@
         <module>zdl-flink</module>
         <module>zdl-doc</module>
         <module>zdl-milvus</module>
+        <module>zdl-s3</module>
     </modules>
 
     <properties>
