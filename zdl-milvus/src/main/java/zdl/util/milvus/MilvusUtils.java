@@ -69,13 +69,13 @@ public class MilvusUtils {
      * @param indexFileSize  maximum size (in MB) of each index file
      */
     private static void createCollection(int dimension, String collectionName, int indexFileSize) {
-        final MetricType metricType = MetricType.IP; // we choose IP (Inner Product) as our metric type
-        CollectionMapping collectionMapping =
+        final var metricType = MetricType.IP; // we choose IP (Inner Product) as our metric type
+        var collectionMapping =
                 new CollectionMapping.Builder(collectionName, dimension)
                         .withIndexFileSize(indexFileSize)
                         .withMetricType(metricType)
                         .build();
-        Response response = client.createCollection(collectionMapping);
+        var response = client.createCollection(collectionMapping);
         if (!response.ok()) {
             String message = response.getMessage();
         }
@@ -85,7 +85,7 @@ public class MilvusUtils {
                                    String collectionName, int dimension) {
         int piece = (vectorIds.size() * dimension * 4 / MAX_DATA_SIZE_PER_INSERT) + 1;
         int duration = vectorIds.size() / piece;
-        for (int i = 0; i < piece + 1; i++) {
+        for (var i = 0; i < piece + 1; i++) {
             int fromIndex = i * duration;
             int toIndex = fromIndex + duration;
             if (toIndex > vectorIds.size()) {
@@ -98,12 +98,12 @@ public class MilvusUtils {
 
             List<Long> tmpVectorIds = vectorIds.subList(fromIndex, toIndex);
             List<List<Float>> tmpVectors = vectors.subList(fromIndex, toIndex);
-            InsertParam insertParam =
+            var insertParam =
                     new InsertParam.Builder(collectionName)
                             .withFloatVectors(tmpVectors)
                             .withVectorIds(tmpVectorIds)
                             .build();
-            InsertResponse insertResponse = client.insert(insertParam);
+            var insertResponse = client.insert(insertParam);
             if (insertResponse.ok()) {
 
             }
@@ -115,20 +115,20 @@ public class MilvusUtils {
                                                                      long topK) {
         List<List<SearchResponse.QueryResult>> finalResult = new ArrayList<>();
         int searchSize = vectors.size();
-        int fromIndex = 0;
+        var fromIndex = 0;
         int toIndex = Math.min(searchSize, MAX_PER_SEARCH);
 
         while (true) {
             List<List<Float>> tmpVectors = vectors.subList(fromIndex, toIndex);
-            JsonObject searchParamsJson = new JsonObject();
+            var searchParamsJson = new JsonObject();
             searchParamsJson.addProperty("nprobe", 20);
-            SearchParam searchParam =
+            var searchParam =
                     new SearchParam.Builder(collectionName)
                             .withFloatVectors(tmpVectors)
                             .withTopK(topK)
                             .withParamsInJson(searchParamsJson.toString())
                             .build();
-            SearchResponse searchResponse = client.search(searchParam);
+            var searchResponse = client.search(searchParam);
             if (searchResponse.ok()) {
                 finalResult.addAll(searchResponse.getQueryResultsList());
             } else {
@@ -148,7 +148,7 @@ public class MilvusUtils {
     }
 
     public static void flush(String collectionName) {
-        Response response = client.flush(collectionName);
+        var response = client.flush(collectionName);
         if (!response.ok()) {
 
         }
