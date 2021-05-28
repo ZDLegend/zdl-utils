@@ -1,10 +1,13 @@
 package zdl.util.s3;
 
 import software.amazon.awssdk.auth.credentials.SystemPropertyCredentialsProvider;
+import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.waiters.WaiterResponse;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.Bucket;
-import software.amazon.awssdk.services.s3.model.ListBucketsResponse;
+import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.waiters.S3Waiter;
 import software.amazon.awssdk.utils.StringUtils;
 
 import java.util.List;
@@ -51,7 +54,38 @@ public class AwsS3Client {
     }
 
     public void createBucket(String bucketName) {
+        S3Waiter s3Waiter = s3Client.waiter();
+        CreateBucketRequest bucketRequest = CreateBucketRequest.builder().bucket(bucketName).build();
 
+        s3Client.createBucket(bucketRequest);
+        HeadBucketRequest bucketRequestWait = HeadBucketRequest.builder().bucket(bucketName).build();
+
+        WaiterResponse<HeadBucketResponse> waiterResponse = s3Waiter.waitUntilBucketExists(bucketRequestWait);
+        waiterResponse.matched().response().ifPresent(s -> System.out.println(s));
     }
 
+    public void remove(String key) {
+        ObjectIdentifier objectIdentifier = ObjectIdentifier.builder().key(key).build();
+        s3Client.deleteObjects(DeleteObjectsRequest.builder().bucket(bucketName).delete(Delete.builder().objects(objectIdentifier).build()).build());
+    }
+
+    public void putObject(String key, byte[] object) {
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder().bucket(bucketName).key(key).build();
+        s3Client.putObject(putObjectRequest, RequestBody.fromBytes(object));
+    }
+
+    public void putText(String key, String text) {
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder().bucket(bucketName).key(key).build();
+        s3Client.putObject(putObjectRequest, RequestBody.fromString(text));
+    }
+
+    public byte[] readBytes(String key) {
+        GetObjectRequest objectRequest = GetObjectRequest.builder().bucket(bucketName).key(key).build();
+        ResponseBytes<GetObjectResponse> objectBytes = s3Client.getObjectAsBytes(objectRequest);
+        return objectBytes.asByteArray();
+    }
+
+    public String reaTexts(String key) {
+        return new String(readBytes(key));
+    }
 }
