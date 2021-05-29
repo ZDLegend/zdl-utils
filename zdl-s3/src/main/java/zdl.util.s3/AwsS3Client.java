@@ -10,7 +10,9 @@ import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.waiters.S3Waiter;
 import software.amazon.awssdk.utils.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static software.amazon.awssdk.core.SdkSystemSetting.*;
 
@@ -22,6 +24,8 @@ import static software.amazon.awssdk.core.SdkSystemSetting.*;
 public class AwsS3Client {
 
     private static final Region DEFAULT_REGION = Region.of("default");
+
+    private static final String SLASH = "/";
 
     private final String bucketName;
     private final S3Client s3Client;
@@ -55,11 +59,11 @@ public class AwsS3Client {
 
     public void createBucket(String bucketName) {
         S3Waiter s3Waiter = s3Client.waiter();
+
         CreateBucketRequest bucketRequest = CreateBucketRequest.builder().bucket(bucketName).build();
-
         s3Client.createBucket(bucketRequest);
-        HeadBucketRequest bucketRequestWait = HeadBucketRequest.builder().bucket(bucketName).build();
 
+        HeadBucketRequest bucketRequestWait = HeadBucketRequest.builder().bucket(bucketName).build();
         WaiterResponse<HeadBucketResponse> waiterResponse = s3Waiter.waitUntilBucketExists(bucketRequestWait);
         waiterResponse.matched().response().ifPresent(s -> System.out.println(s));
     }
@@ -87,5 +91,19 @@ public class AwsS3Client {
 
     public String reaTexts(String key) {
         return new String(readBytes(key));
+    }
+
+    public List<String> list(String path) {
+        if (!path.endsWith(SLASH)) {
+            path = path + SLASH;
+        }
+        ListObjectsV2Request request = ListObjectsV2Request.builder()
+                .bucket(bucketName).delimiter(SLASH).prefix(path).build();
+        List<String> result = new ArrayList<>();
+        for (ListObjectsV2Response response : s3Client.listObjectsV2Paginator(request)) {
+            result.addAll(response.contents().stream().map(S3Object::key).collect(Collectors.toList()));
+            result.addAll(response.commonPrefixes().stream().map(CommonPrefix::prefix).collect(Collectors.toList()));
+        }
+        return result;
     }
 }
