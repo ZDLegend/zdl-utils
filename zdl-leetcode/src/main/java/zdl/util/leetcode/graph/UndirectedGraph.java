@@ -1,9 +1,11 @@
-package zdl.util.leetcode;
+package zdl.util.leetcode.graph;
 
 import java.util.*;
 
 /**
  * 无向图
+ * <p>
+ * 图是若干个顶点(Vertices)和边(Edges)相互连接组成的。边仅由两个顶点连接，并且没有方向的图称为无向图。
  *
  * @author ZDLegend
  * @version 1.0
@@ -11,9 +13,24 @@ import java.util.*;
  */
 public class UndirectedGraph<T> {
 
+    /**
+     * 边个数
+     */
     private int edge;
+
+    /**
+     * 节点列表
+     */
     private final List<T> elements;
+
+    /**
+     * 节点对应坐标
+     */
     private final Map<T, Integer> indexMap;
+
+    /**
+     * 使用邻接列表来表示
+     */
     private final List<List<Integer>> adj;
 
     public UndirectedGraph() {
@@ -53,6 +70,11 @@ public class UndirectedGraph<T> {
         return elements.get(index);
     }
 
+
+    public Integer getIndex(T t) {
+        return indexMap.getOrDefault(t, null);
+    }
+
     /**
      * 获取所有index索引的关联变索引
      */
@@ -68,51 +90,7 @@ public class UndirectedGraph<T> {
         return elements.size();
     }
 
-    private static class Statistic<T> {
-        private final boolean[] marked;
-        private final int[] id;
-        private int count;
-        private final UndirectedGraph<T> graph;
-
-        public Statistic(UndirectedGraph<T> graph) {
-            this.graph = graph;
-            marked = new boolean[graph.size()];
-            id = new int[graph.size()];
-            for (int i = 0; i < graph.size(); i++) {
-                if (!marked[i]) {
-                    dfs(i);
-                    count++;
-                }
-            }
-        }
-
-        /**
-         * 计算无向图的连通分量
-         *
-         * @return 连通分量列表
-         */
-        public List<List<T>> to() {
-            List<List<T>> ll = new ArrayList<>();
-            for (int i = 0; i < count; i++) {
-                ll.add(new ArrayList<>());
-            }
-            for (int i = 0; i < id.length; i++) {
-                ll.get(id[i]).add(graph.ofIndex(i));
-            }
-            return ll;
-        }
-
-        /**
-         * 处理索引为V的元素的连通分量
-         */
-        private void dfs(int v) {
-            marked[v] = false;
-            id[v] = count;
-            for (int w : graph.adj(v)) {
-                if (!marked[w]) {
-                    dfs(w);
-                }
-            }
-        }
+    public int getEdge() {
+        return edge;
     }
 }
