@@ -64,6 +64,8 @@ public class MilvusUtils {
     }
 
     /**
+     * 创建Collection
+     *
      * @param dimension      dimension of each vector
      * @param collectionName collection name
      * @param indexFileSize  maximum size (in MB) of each index file
@@ -154,6 +156,9 @@ public class MilvusUtils {
         }
     }
 
+    /**
+     * 如果collection存在则删除
+     */
     public static void dropCollection(String collectionName) {
         HasCollectionResponse response = client.hasCollection(collectionName);
         if (response.hasCollection()) {
@@ -161,6 +166,9 @@ public class MilvusUtils {
         }
     }
 
+    /**
+     * 向量归一化
+     */
     static List<Float> normalizeVector(List<Float> vector) {
         float squareSum = vector.stream().map(x -> x * x).reduce((float) 0, Float::sum);
         final float norm = (float) Math.sqrt(squareSum);

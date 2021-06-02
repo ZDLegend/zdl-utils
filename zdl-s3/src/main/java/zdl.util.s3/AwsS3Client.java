@@ -57,6 +57,9 @@ public class AwsS3Client {
                 .anyMatch(bucket -> bucket.name().equals(bucketName));
     }
 
+    /**
+     * 创建桶
+     */
     public void createBucket(String bucketName) {
         S3Waiter s3Waiter = s3Client.waiter();
 
@@ -93,6 +96,9 @@ public class AwsS3Client {
         return new String(readBytes(key));
     }
 
+    /**
+     * 获取文件下列表
+     */
     public List<String> list(String path) {
         if (!path.endsWith(SLASH)) {
             path = path + SLASH;
